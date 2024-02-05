@@ -36,11 +36,6 @@ public class UserService {
         userRepository.delete(found);
     }
 
-    public User findByIdAndUpdate(UUID id, User body) {
-        //da implementare la logica per l'update
-        User found = this.findById(id);
-        return userRepository.save(found);
-    }
 
     public User findByEmail(String email) throws NotFoundException {
         return userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("User with  email: " + email + " not found!"));

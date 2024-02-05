@@ -42,6 +42,7 @@ public class UserController {
     }
 
     @PutMapping("/me/updateProfile")
+    @ResponseStatus(HttpStatus.OK)
     public User updateUser(@AuthenticationPrincipal User currentUser, @RequestBody @Validated UpdateUserDTO body, BindingResult validation) {
         if (validation.hasErrors()) {
             throw new BadRequestException(validation.getAllErrors());

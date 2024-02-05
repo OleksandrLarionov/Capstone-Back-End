@@ -1,5 +1,6 @@
 package LarionovOleksandrBackEndCapstone.D.DBlog.services;
 
+import LarionovOleksandrBackEndCapstone.D.DBlog.ENUMS.ROLE;
 import LarionovOleksandrBackEndCapstone.D.DBlog.entities.User;
 import LarionovOleksandrBackEndCapstone.D.DBlog.exceptions.BadRequestException;
 import LarionovOleksandrBackEndCapstone.D.DBlog.exceptions.UnauthorizedException;
@@ -45,6 +46,7 @@ public class AuthService {
         newUser.setPassword(
                 bcrypt.encode(body.password())
         );
+        newUser.setRole(ROLE.USER);
         newUser.setProfileImage("https://ui-avatars.com/api/?name=" +
                 body.name().replaceAll(" ", "") + "+" +
                 body.surname().replaceAll(" ", ""));
