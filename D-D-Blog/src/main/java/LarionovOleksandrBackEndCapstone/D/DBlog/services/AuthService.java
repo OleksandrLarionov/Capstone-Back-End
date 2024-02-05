@@ -45,7 +45,11 @@ public class AuthService {
         newUser.setPassword(
                 bcrypt.encode(body.password())
         );
-        newUser.setSecretAnswer(body.secretAnswer());
+        newUser.setProfileImage("https://ui-avatars.com/api/?name=" +
+                body.name().replaceAll(" ", "") + "+" +
+                body.surname().replaceAll(" ", ""));
+        newUser.setBlogBackgroundImage( "MUST TO BE SETTED");
+        newUser.setSecretAnswer(bcrypt.encode(body.secretAnswer()));
         return userRepository.save(newUser);
     }
     public User updateUser(User currentUser, UpdateUserDTO body) {
