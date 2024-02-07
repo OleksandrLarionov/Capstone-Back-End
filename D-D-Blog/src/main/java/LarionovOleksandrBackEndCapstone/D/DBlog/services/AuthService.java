@@ -34,24 +34,24 @@ public class AuthService {
     }
     public User saveNewUser(NewUserDTO body) {
 
-        userRepository.findByEmail(body.email()).ifPresent(user ->
-        {
-            throw new BadRequestException("Email: " + user.getEmail() + " is already in use");
-        });
         User newUser = new User();
-        newUser.setUsername(body.username());
-        newUser.setName(body.name());
-        newUser.setSurname(body.surname());
-        newUser.setEmail(body.email());
-        newUser.setPassword(
-                bcrypt.encode(body.password())
-        );
+        newUser.setUsername(body.getUsername());
+        newUser.setName(body.getName());
+        newUser.setSurname(body.getSurname());
+        newUser.setEmail(body.getEmail());
+        if(body.getPassword() != null){
+            newUser.setPassword(
+                    bcrypt.encode(body.getPassword())
+            );
+        }
         newUser.setRole(ROLE.USER);
         newUser.setProfileImage("https://ui-avatars.com/api/?name=" +
-                body.name().replaceAll(" ", "") + "+" +
-                body.surname().replaceAll(" ", ""));
+                body.getName().replaceAll(" ", "") + "+" +
+                body.getSurname().replaceAll(" ", ""));
         newUser.setBlogBackgroundImage( "MUST TO BE SETTED");
-        newUser.setSecretAnswer(bcrypt.encode(body.secretAnswer()));
+        if (body.getSecretAnswer() != null && !body.getSecretAnswer().isEmpty()) {
+            newUser.setSecretAnswer(bcrypt.encode(body.getSecretAnswer()));
+        }
         return userRepository.save(newUser);
     }
     public User updateUser(User currentUser, UpdateUserDTO body) {

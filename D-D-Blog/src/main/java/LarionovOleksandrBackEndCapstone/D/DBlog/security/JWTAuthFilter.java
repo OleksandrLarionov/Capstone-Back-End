@@ -35,26 +35,38 @@ public class JWTAuthFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        try {
+        if (!request.getMethod().equals("state")) {
+            String requestPath = request.getServletPath();
+            if (requestPath.startsWith("/google/callback")) {
+                filterChain.doFilter(request, response);
+                return;
+            }
             String authHeader = request.getHeader("Authorization");
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            if (authHeader == null || !authHeader.startsWith("Bearer "))
                 throw new UnauthorizedException("Non è presente il token nell'Authorization header.");
-            } else {
-                String accessToken = authHeader.substring(7);
-                jwtTools.verifyToken(accessToken);
-                String id = jwtTools.extractIdFromToken(accessToken);
-                User user = userService.findById(UUID.fromString(id));
+            String accesToken = authHeader.substring(11);
+            jwtTools.verifyToken(accesToken);
+            String email = jwtTools.extractEmailFromToken(accesToken);
+            try {
+                User user = userService.findByEmail(email);
                 Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 filterChain.doFilter(request, response);
 
+
+            } catch (ExpiredJwtException | NotFoundException ex) {
+                exceptionResolver.resolveException(request, response, null, ex);
             }
-        } catch (ExpiredJwtException | NotFoundException ex) {
-            exceptionResolver.resolveException(request, response, null, ex);
         }
     }
+
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        return new AntPathMatcher().match("/auth/**", request.getServletPath());
+        String servletPath = request.getServletPath();
+        return new AntPathMatcher().match("/auth/**", servletPath)
+                || servletPath.equals("/google/authorization-url")
+                || servletPath.startsWith("/google/callback")
+                || servletPath.equals("/favicon.ico")
+                || servletPath.equals("/login");
     }
 }

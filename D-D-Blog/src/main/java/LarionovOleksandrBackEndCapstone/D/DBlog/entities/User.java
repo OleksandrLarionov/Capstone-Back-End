@@ -1,6 +1,7 @@
 package LarionovOleksandrBackEndCapstone.D.DBlog.entities;
 
 
+
 import LarionovOleksandrBackEndCapstone.D.DBlog.ENUMS.ROLE;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
@@ -20,7 +21,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "user")
+@Table(name = "users")
 @Entity
 @JsonIgnoreProperties({"password", "authorities", "accountNonExpired", "enabled", "accountNonLocked", "credentialsNonExpired", "username", "role", "secretAnswer"})
 public class User implements UserDetails {
@@ -54,6 +55,7 @@ public class User implements UserDetails {
         this.blogBackgroundImage = "MUST TO BE SETTED";
         this.role = ROLE.USER;
     }
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
