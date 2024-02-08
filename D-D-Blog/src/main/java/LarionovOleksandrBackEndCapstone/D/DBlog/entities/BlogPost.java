@@ -30,7 +30,7 @@ public class BlogPost {
     @JsonBackReference
     private User user;
 
-    @OneToMany(mappedBy = "blog_post_id", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "blogPost", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<Comment> commentsList;
 

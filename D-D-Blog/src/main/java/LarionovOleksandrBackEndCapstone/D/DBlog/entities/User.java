@@ -40,11 +40,11 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private ROLE role;
 
-    @OneToMany(mappedBy = "user_id", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<BlogPost> blogPostList;
 
-    @OneToMany(mappedBy = "user_id", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<Comment> commentsList;
 
