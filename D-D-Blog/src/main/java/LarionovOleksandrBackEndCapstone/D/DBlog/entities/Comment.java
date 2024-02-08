@@ -1,6 +1,7 @@
 package LarionovOleksandrBackEndCapstone.D.DBlog.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -22,12 +23,12 @@ public class Comment {
     private LocalDate date = LocalDate.now();
 
     @ManyToOne
-    @JsonBackReference
+    @JsonIgnore
     @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne
-    @JsonBackReference
+    @JsonIgnore
     @JoinColumn(name = "blog_post_id")
     private BlogPost blogPost;
 }
