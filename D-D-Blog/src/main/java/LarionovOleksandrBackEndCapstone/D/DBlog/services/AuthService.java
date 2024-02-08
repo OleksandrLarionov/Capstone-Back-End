@@ -1,6 +1,8 @@
 package LarionovOleksandrBackEndCapstone.D.DBlog.services;
 
 import LarionovOleksandrBackEndCapstone.D.DBlog.ENUMS.ROLE;
+import LarionovOleksandrBackEndCapstone.D.DBlog.entities.BlogPost;
+import LarionovOleksandrBackEndCapstone.D.DBlog.entities.Comment;
 import LarionovOleksandrBackEndCapstone.D.DBlog.entities.User;
 import LarionovOleksandrBackEndCapstone.D.DBlog.exceptions.BadRequestException;
 import LarionovOleksandrBackEndCapstone.D.DBlog.exceptions.UnauthorizedException;
@@ -12,6 +14,10 @@ import LarionovOleksandrBackEndCapstone.D.DBlog.security.JWTTools;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class AuthService {
@@ -39,6 +45,11 @@ public class AuthService {
         newUser.setName(body.getName());
         newUser.setSurname(body.getSurname());
         newUser.setEmail(body.getEmail());
+        List<BlogPost> blogPostList = new ArrayList<>();
+        List<Comment> commentsList = new ArrayList<>();
+        newUser.setBlogPostList(blogPostList);
+        newUser.setCommentsList(commentsList);
+        newUser.setUserCreationDate(LocalDate.now());
         if(body.getPassword() != null){
             newUser.setPassword(
                     bcrypt.encode(body.getPassword())

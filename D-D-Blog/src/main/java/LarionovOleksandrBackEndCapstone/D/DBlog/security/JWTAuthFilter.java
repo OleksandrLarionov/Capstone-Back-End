@@ -44,11 +44,11 @@ public class JWTAuthFilter extends OncePerRequestFilter {
             String authHeader = request.getHeader("Authorization");
             if (authHeader == null || !authHeader.startsWith("Bearer "))
                 throw new UnauthorizedException("Non è presente il token nell'Authorization header.");
-            String accesToken = authHeader.substring(11);
+            String accesToken = authHeader.substring(7);
             jwtTools.verifyToken(accesToken);
-            String email = jwtTools.extractEmailFromToken(accesToken);
+            String userId = jwtTools.extractIdFromToken(accesToken);
             try {
-                User user = userService.findByEmail(email);
+                User user = userService.findById(UUID.fromString(userId));
                 Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 filterChain.doFilter(request, response);

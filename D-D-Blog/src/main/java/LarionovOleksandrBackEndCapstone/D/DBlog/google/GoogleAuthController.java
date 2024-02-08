@@ -35,7 +35,7 @@ public class GoogleAuthController {
 
 
     @GetMapping("/callback")
-    public void googleCallback(@RequestParam("code") String authorizationCode) throws NotFoundException {
+    public void googleCallback(@RequestParam("code") String authorizationCode, HttpServletResponse response) throws NotFoundException {
 
         GoogleAccessTokenResponse accessTokenResponse = googleAuthService.getAccessToken(authorizationCode);
         String accessToken = accessTokenResponse.getAccess_token();
@@ -67,8 +67,7 @@ public class GoogleAuthController {
         }
         if (user != null) {
             String token = jwtTools.createToken(user);
-            addAccessTokenToCookie(token);
-//            getAccessTokenFromCookie();
+            addAccessTokenToCookie(token, response);
 
         }}
         @GetMapping("/authorization-url")
@@ -76,29 +75,12 @@ public class GoogleAuthController {
             return new ResponseEntity<>(googleAuthService.getAuthorizationUrl(), HttpStatus.OK);
 
         }
-
-    public ResponseEntity<?> addAccessTokenToCookie(String accessToken) {
+    private void addAccessTokenToCookie(String accessToken, HttpServletResponse response) {
         Cookie cookie = new Cookie("access_token", accessToken);
-        cookie.setPath("/");
+        System.out.println(accessToken);
+        cookie.setPath("/3001/google/callback/");
         cookie.setMaxAge(3600); // Tempo di scadenza del cookie in secondi (1 ora)
-        cookie.setHttpOnly(true); // Il cookie sarà accessibile solo da codice server-side
-
-        // Crea una ResponseEntity vuota con lo stato HTTP 200 (OK) e aggiungi il cookie all'header
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.SET_COOKIE, cookie.toString());
-        return new ResponseEntity<>(null, headers, HttpStatus.OK);
+        cookie.setHttpOnly(false); // Il cookie sarà accessibile solo da codice server-side
+        response.addCookie(cookie);
     }
-    public String getAccessTokenFromCookie(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("access_token")) {
-                    return cookie.getValue();
-                }
-            }
-        }
-        return null;
-    }
-
-
     }

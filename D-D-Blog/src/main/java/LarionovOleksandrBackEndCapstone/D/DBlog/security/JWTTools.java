@@ -18,9 +18,8 @@ public class JWTTools {
     private String secret;
 
     public String createToken(User user) {
-        return Jwts.builder().subject(String.valueOf(user.getId()))
-                .claim("role", user.getRole())
-                .claim("email", user.getEmail())
+        return Jwts.builder()
+                .subject(String.valueOf(user.getId()))
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 10))
                 .signWith(Keys.hmacShaKeyFor(secret.getBytes()))

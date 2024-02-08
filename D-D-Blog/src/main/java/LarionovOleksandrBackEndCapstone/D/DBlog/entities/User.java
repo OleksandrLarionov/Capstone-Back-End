@@ -14,6 +14,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -24,7 +26,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @Table(name = "users")
 @Entity
-@JsonIgnoreProperties({"password", "authorities", "accountNonExpired", "enabled", "accountNonLocked", "credentialsNonExpired", "username", "role", "secretAnswer"})
+@JsonIgnoreProperties({"password", "authorities", "accountNonExpired", "enabled", "accountNonLocked",
+        "credentialsNonExpired", "username", "role", "secretAnswer","blogPostList","commentsList"})
 public class User implements UserDetails {
     @Id
     @GeneratedValue
@@ -37,15 +40,14 @@ public class User implements UserDetails {
     private String secretAnswer;
     private String profileImage;
     private String blogBackgroundImage;
+    private LocalDate userCreationDate;
     @Enumerated(EnumType.STRING)
     private ROLE role;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
     private List<BlogPost> blogPostList;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    @JsonManagedReference
     private List<Comment> commentsList;
 
 
@@ -63,17 +65,21 @@ public class User implements UserDetails {
                 surname.replaceAll(" ", "");
         this.blogBackgroundImage = "MUST TO BE SETTED";
         this.role = ROLE.USER;
+        this.blogPostList = new ArrayList<>();
+        this.commentsList = new ArrayList<>();
+        this.userCreationDate = LocalDate.now();
     }
 
+    public void addCommentToList (Comment comment){
+        this.commentsList.add(comment);
+    }
+    public void addBlogToList (BlogPost post){
+        this.blogPostList.add(post);
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(this.role.name()));
-    }
-
-    @Override
-    public String getUsername() {
-        return this.username;
     }
 
     @Override
