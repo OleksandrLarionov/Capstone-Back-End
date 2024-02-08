@@ -1,6 +1,8 @@
 package LarionovOleksandrBackEndCapstone.D.DBlog.google;
 
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -76,4 +78,5 @@ public class GoogleAuthService {
 
         return responseEntity.getBody();
     }
+
 }

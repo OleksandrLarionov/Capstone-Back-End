@@ -7,7 +7,11 @@ import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.user.NewUserDTO;
 import LarionovOleksandrBackEndCapstone.D.DBlog.security.JWTTools;
 import LarionovOleksandrBackEndCapstone.D.DBlog.services.AuthService;
 import LarionovOleksandrBackEndCapstone.D.DBlog.services.UserService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,7 +35,7 @@ public class GoogleAuthController {
 
 
     @GetMapping("/callback")
-    public ResponseEntity<AutPayload> googleCallback(@RequestParam("code") String authorizationCode) throws NotFoundException {
+    public void googleCallback(@RequestParam("code") String authorizationCode) throws NotFoundException {
 
         GoogleAccessTokenResponse accessTokenResponse = googleAuthService.getAccessToken(authorizationCode);
         String accessToken = accessTokenResponse.getAccess_token();
@@ -63,15 +67,38 @@ public class GoogleAuthController {
         }
         if (user != null) {
             String token = jwtTools.createToken(user);
-            return new ResponseEntity<>(new AutPayload(token), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); // O gestisci in altro modo questo caso
-        }
-    }
+            addAccessTokenToCookie(token);
+//            getAccessTokenFromCookie();
+
+        }}
         @GetMapping("/authorization-url")
         public ResponseEntity<String> getGoogleAuthorizationUrl () {
             return new ResponseEntity<>(googleAuthService.getAuthorizationUrl(), HttpStatus.OK);
 
         }
+
+    public ResponseEntity<?> addAccessTokenToCookie(String accessToken) {
+        Cookie cookie = new Cookie("access_token", accessToken);
+        cookie.setPath("/");
+        cookie.setMaxAge(3600); // Tempo di scadenza del cookie in secondi (1 ora)
+        cookie.setHttpOnly(true); // Il cookie sarà accessibile solo da codice server-side
+
+        // Crea una ResponseEntity vuota con lo stato HTTP 200 (OK) e aggiungi il cookie all'header
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.SET_COOKIE, cookie.toString());
+        return new ResponseEntity<>(null, headers, HttpStatus.OK);
+    }
+    public String getAccessTokenFromCookie(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("access_token")) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
+    }
+
 
     }

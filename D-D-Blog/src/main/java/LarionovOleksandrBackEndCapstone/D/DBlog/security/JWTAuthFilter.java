@@ -35,7 +35,7 @@ public class JWTAuthFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if (!request.getMethod().equals("state")) {
+        if (!request.getMethod().equals("OPTIONS")) {
             String requestPath = request.getServletPath();
             if (requestPath.startsWith("/google/callback")) {
                 filterChain.doFilter(request, response);
