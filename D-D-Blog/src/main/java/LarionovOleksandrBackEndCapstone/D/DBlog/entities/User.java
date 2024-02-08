@@ -4,6 +4,7 @@ package LarionovOleksandrBackEndCapstone.D.DBlog.entities;
 
 import LarionovOleksandrBackEndCapstone.D.DBlog.ENUMS.ROLE;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -38,6 +39,14 @@ public class User implements UserDetails {
     private String blogBackgroundImage;
     @Enumerated(EnumType.STRING)
     private ROLE role;
+
+    @OneToMany(mappedBy = "user_id", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<BlogPost> blogPostList;
+
+    @OneToMany(mappedBy = "user_id", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Comment> commentsList;
 
 
     public User(
