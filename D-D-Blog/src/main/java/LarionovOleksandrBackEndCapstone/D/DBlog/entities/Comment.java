@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -15,12 +17,14 @@ import static LarionovOleksandrBackEndCapstone.D.DBlog.exceptions.ExceptionsHand
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "comments_area")
+@Getter
+@Setter
 public class Comment {
     @Id
     @GeneratedValue
     private UUID id;
     private String comment;
-    private LocalDate date = LocalDate.now();
+    private LocalDate date;
 
     @ManyToOne
     @JsonIgnore

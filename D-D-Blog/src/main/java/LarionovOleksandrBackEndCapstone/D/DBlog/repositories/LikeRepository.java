@@ -8,4 +8,5 @@ import java.util.UUID;
 
 @Repository
 public interface LikeRepository extends JpaRepository<Like, UUID>{
+    Like findByUserIdAndBlogPostId (UUID userId, UUID blogPostId);
 }

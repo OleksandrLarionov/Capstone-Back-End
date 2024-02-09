@@ -7,6 +7,7 @@ import LarionovOleksandrBackEndCapstone.D.DBlog.exceptions.NotFoundException;
 import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.BlogPostDTO;
 import LarionovOleksandrBackEndCapstone.D.DBlog.repositories.BlogPostRepository;
 import LarionovOleksandrBackEndCapstone.D.DBlog.repositories.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -55,7 +56,7 @@ public class BlogPostService {
     public BlogPost findById(UUID id) {
         return blogPostRepository.findById(id).orElseThrow(() -> new NotFoundException(String.valueOf(id)));
     }
-
+    @Transactional
     public void delete(UUID id) {
         BlogPost found = this.findById(id);
         blogPostRepository.delete(found);

@@ -12,6 +12,7 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -46,7 +47,7 @@ public class UserService {
     public User findById(UUID id) {
         return userRepository.findById(id).orElseThrow(() -> new NotFoundException(String.valueOf(id)));
     }
-
+    @Transactional
     public void delete(UUID id) {
         User found = this.findById(id);
         userRepository.delete(found);
