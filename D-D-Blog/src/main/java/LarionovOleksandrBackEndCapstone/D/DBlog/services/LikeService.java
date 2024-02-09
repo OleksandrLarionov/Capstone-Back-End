@@ -38,4 +38,12 @@ public class LikeService {
         like.setUser(user);
         return likeRepository.save(like);
     }
+    public void deleteLike(UUID blogPostId, UUID userId) {
+        Like like = likeRepository.findByUserIdAndBlogPostId(blogPostId, userId);
+        if (like != null) {
+            like.getBlogPost().getLikes().remove(like);
+            likeRepository.delete(like);
+        }
+
+    }
 }
