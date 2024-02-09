@@ -9,17 +9,14 @@ import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.user.UserLogInDTO;
 import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.user.UserLogInResponseDTO;
 import LarionovOleksandrBackEndCapstone.D.DBlog.services.AuthService;
 import LarionovOleksandrBackEndCapstone.D.DBlog.services.UserService;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.io.IOException;
-import java.nio.file.AccessDeniedException;
-import java.security.GeneralSecurityException;
+
+
 
 @RestController
 @RequestMapping("/auth")
