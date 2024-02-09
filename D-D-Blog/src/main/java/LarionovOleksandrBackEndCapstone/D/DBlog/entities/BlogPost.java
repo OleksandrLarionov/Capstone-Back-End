@@ -7,6 +7,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -35,6 +37,11 @@ public class BlogPost {
     @OneToMany(mappedBy = "blogPost", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Comment> commentsList;
+
+    @OneToMany(mappedBy = "blogPost",cascade = CascadeType.ALL)
+    @JsonManagedReference
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private List<Like> likes;
 
 
 }

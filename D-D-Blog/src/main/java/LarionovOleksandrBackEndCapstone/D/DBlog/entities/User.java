@@ -41,6 +41,7 @@ public class User implements UserDetails {
     private String profileImage;
     private String blogBackgroundImage;
     private LocalDate userCreationDate;
+    private LocalDate userBirthday;
     @Enumerated(EnumType.STRING)
     private ROLE role;
 
