@@ -4,7 +4,6 @@ import LarionovOleksandrBackEndCapstone.D.DBlog.ENUMS.ROLE;
 import LarionovOleksandrBackEndCapstone.D.DBlog.entities.BlogPost;
 import LarionovOleksandrBackEndCapstone.D.DBlog.entities.Comment;
 import LarionovOleksandrBackEndCapstone.D.DBlog.entities.User;
-import LarionovOleksandrBackEndCapstone.D.DBlog.exceptions.BadRequestException;
 import LarionovOleksandrBackEndCapstone.D.DBlog.exceptions.UnauthorizedException;
 import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.user.NewUserDTO;
 import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.user.UpdateUserDTO;
@@ -50,6 +49,7 @@ public class AuthService {
         newUser.setBlogPostList(blogPostList);
         newUser.setCommentsList(commentsList);
         newUser.setUserCreationDate(LocalDate.now());
+        newUser.setUserBirthday(body.getBDay());
         if(body.getPassword() != null){
             newUser.setPassword(
                     bcrypt.encode(body.getPassword())

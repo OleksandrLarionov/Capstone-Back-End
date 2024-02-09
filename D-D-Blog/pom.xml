@@ -97,6 +97,12 @@
 			<artifactId>spring-security-oauth2-client</artifactId>
 			<version>6.2.1</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.github.javafaker/javafaker -->
+		<dependency>
+			<groupId>com.github.javafaker</groupId>
+			<artifactId>javafaker</artifactId>
+			<version>1.0.2</version>
+		</dependency>
 
 	</dependencies>
 

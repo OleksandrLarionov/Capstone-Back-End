@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+import java.time.LocalDate;
 
 
 @Data
@@ -27,4 +28,5 @@ public class NewUserDTO{
         @Size(min = 8, max = 20, message = "Answer must be longer")
         private String secretAnswer;
         private String profileImg;
+        private LocalDate bDay;
 }
