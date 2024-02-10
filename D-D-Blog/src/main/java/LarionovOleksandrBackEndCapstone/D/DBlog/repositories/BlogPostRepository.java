@@ -9,4 +9,5 @@ import java.util.UUID;
 
 @Repository
 public interface BlogPostRepository extends JpaRepository<BlogPost, UUID> {
+    List<BlogPost> findByUserId (UUID userId);
 }

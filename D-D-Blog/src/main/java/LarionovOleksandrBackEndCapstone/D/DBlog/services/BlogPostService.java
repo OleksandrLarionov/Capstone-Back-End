@@ -36,7 +36,8 @@ public class BlogPostService {
         Pageable pageable = PageRequest.of(page, size, Sort.by(orderBy));
         return blogPostRepository.findAll(pageable);
     }
-    public List<BlogPost> getAll(){
+
+    public List<BlogPost> getAll() {
         return blogPostRepository.findAll();
     }
 
@@ -48,14 +49,18 @@ public class BlogPostService {
         newBlog.setContent(body.content());
         newBlog.setCreationBlogDate(LocalDate.now());
         User user = userRepository.findById(body.userId()).orElseThrow(() -> new NotFoundException("Utente non trovato"));
+        List<BlogPost> blogsUser = blogPostRepository.findByUserId(body.userId());
+        blogsUser.add(newBlog);
+        user.setBlogPostList(blogsUser);
+        userRepository.save(user);
         newBlog.setUser(user);
-        user.addBlogToList(newBlog);
         return blogPostRepository.save(newBlog);
     }
 
     public BlogPost findById(UUID id) {
         return blogPostRepository.findById(id).orElseThrow(() -> new NotFoundException(String.valueOf(id)));
     }
+
     @Transactional
     public void delete(UUID id) {
         BlogPost found = this.findById(id);

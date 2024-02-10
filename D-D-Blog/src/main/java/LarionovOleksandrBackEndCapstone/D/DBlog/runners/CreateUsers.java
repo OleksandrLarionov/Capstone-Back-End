@@ -93,4 +93,7 @@ public class CreateUsers implements CommandLineRunner {
         long randomDay = ThreadLocalRandom.current().nextLong(minDay, maxDay);
         return LocalDate.ofEpochDay(randomDay);
     }
+
+
+
 }

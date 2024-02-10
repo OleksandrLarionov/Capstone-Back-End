@@ -26,6 +26,7 @@ public class BlogPost {
     private String category;
     private String title;
     private String cover;
+    @Column(columnDefinition = "text")
     private String content;
     private LocalDate creationBlogDate;
 
