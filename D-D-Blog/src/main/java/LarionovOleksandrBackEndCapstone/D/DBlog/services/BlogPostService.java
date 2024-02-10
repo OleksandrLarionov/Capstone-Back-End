@@ -2,8 +2,10 @@ package LarionovOleksandrBackEndCapstone.D.DBlog.services;
 
 
 import LarionovOleksandrBackEndCapstone.D.DBlog.entities.BlogPost;
+import LarionovOleksandrBackEndCapstone.D.DBlog.entities.Comment;
 import LarionovOleksandrBackEndCapstone.D.DBlog.entities.User;
 import LarionovOleksandrBackEndCapstone.D.DBlog.exceptions.NotFoundException;
+import LarionovOleksandrBackEndCapstone.D.DBlog.exceptions.UnauthorizedException;
 import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.BlogPostDTO;
 import LarionovOleksandrBackEndCapstone.D.DBlog.repositories.BlogPostRepository;
 import LarionovOleksandrBackEndCapstone.D.DBlog.repositories.UserRepository;
@@ -36,6 +38,14 @@ public class BlogPostService {
         Pageable pageable = PageRequest.of(page, size, Sort.by(orderBy));
         return blogPostRepository.findAll(pageable);
     }
+    public Page<BlogPost> findCurrentUserBlogs(User currentUser, int page, int size, String orderBy) {
+        if (size < 0)
+            size = 10;
+        if (size > 100)
+            size = 20;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(orderBy));
+        return blogPostRepository.findByUserId(currentUser.getId(), pageable);
+    }
 
     public List<BlogPost> getAll() {
         return blogPostRepository.findAll();
@@ -52,7 +62,6 @@ public class BlogPostService {
         List<BlogPost> blogsUser = blogPostRepository.findByUserId(body.userId());
         blogsUser.add(newBlog);
         user.setBlogPostList(blogsUser);
-        userRepository.save(user);
         newBlog.setUser(user);
         return blogPostRepository.save(newBlog);
     }
@@ -85,6 +94,12 @@ public class BlogPostService {
         return categoryList;
     }
 
+    public void deleteBlog(User currentUser, UUID id){
+        BlogPost found = blogPostRepository.findByUserIdAndId(currentUser.getId(), id);
+        if (found != null){
+            blogPostRepository.delete(found);
+        }else throw new UnauthorizedException("You have not authority");
+    }
 
 }
 

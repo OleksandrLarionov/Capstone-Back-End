@@ -12,4 +12,6 @@ import java.util.UUID;
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, UUID> {
     Page<Comment> findByBlogPostId(UUID blogPostId, Pageable pageable);
+    List<Comment> findByUserId (UUID userId);
+    List<Comment> findByBlogPostId (UUID blogPostId);
 }

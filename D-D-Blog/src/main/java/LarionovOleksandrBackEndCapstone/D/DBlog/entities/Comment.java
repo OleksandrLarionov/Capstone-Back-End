@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static LarionovOleksandrBackEndCapstone.D.DBlog.exceptions.ExceptionsHandler.newDateAndHour;
@@ -23,8 +24,9 @@ public class Comment {
     @Id
     @GeneratedValue
     private UUID id;
+    @Column(columnDefinition = "text")
     private String comment;
-    private LocalDate date;
+    private LocalDateTime date;
 
     @ManyToOne
     @JsonIgnore
