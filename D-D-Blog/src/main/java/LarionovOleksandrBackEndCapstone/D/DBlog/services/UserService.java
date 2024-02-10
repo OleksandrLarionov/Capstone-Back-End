@@ -4,6 +4,8 @@ import LarionovOleksandrBackEndCapstone.D.DBlog.entities.User;
 import LarionovOleksandrBackEndCapstone.D.DBlog.exceptions.NotFoundException;
 import LarionovOleksandrBackEndCapstone.D.DBlog.repositories.UserRepository;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -21,6 +23,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
@@ -33,6 +36,8 @@ import java.util.UUID;
 public class UserService {
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    private Cloudinary cloudinaryUploader;
 
 
     public Page<User> getUsers(int page, int size, String orderBy) {
@@ -56,5 +61,23 @@ public class UserService {
 
     public User findByEmail(String email) throws NotFoundException {
         return userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("User with  email: " + email + " not found!"));
+    }
+    public String uploadPicture(MultipartFile file, UUID userId) throws IOException {
+        String url = (String) cloudinaryUploader.uploader()
+                .upload(file.getBytes(), ObjectUtils.emptyMap())
+                .get("url");
+        User found = this.findById(userId);
+        found.setProfileImage(url);
+        userRepository.save(found);
+        return "Img profile saved";
+    }
+    public String blogBackgroundImage(MultipartFile file, UUID userId) throws IOException {
+        String url = (String) cloudinaryUploader.uploader()
+                .upload(file.getBytes(), ObjectUtils.emptyMap())
+                .get("url");
+        User found = this.findById(userId);
+        found.setBlogBackgroundImage(url);
+        userRepository.save(found);
+        return "Img Comments Changed";
     }
 }

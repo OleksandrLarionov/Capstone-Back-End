@@ -15,7 +15,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.UUID;
 
 @RestController
@@ -74,4 +76,12 @@ public class UserController {
         userService.delete(id);
     }
 
+    @PostMapping("/me/uploadImage")
+    public String uploadUserProfileImg(@RequestParam("profileImg") MultipartFile file, @AuthenticationPrincipal User currentUser) throws IOException {
+        return userService.uploadPicture(file,currentUser.getId());
+    }
+    @PostMapping("/me/uploadImage/commentArea")
+    public String blogBackgroundImage(@RequestParam("commentBackgroundImg") MultipartFile file, @AuthenticationPrincipal User currentUser) throws IOException {
+        return userService.blogBackgroundImage(file,currentUser.getId());
+    }
 }
