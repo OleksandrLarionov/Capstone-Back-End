@@ -1,21 +1,28 @@
 package LarionovOleksandrBackEndCapstone.D.DBlog.controllers;
 
 
+import LarionovOleksandrBackEndCapstone.D.DBlog.ENUMS.ROLE;
+import LarionovOleksandrBackEndCapstone.D.DBlog.entities.BlogPost;
+import LarionovOleksandrBackEndCapstone.D.DBlog.entities.Comment;
 import LarionovOleksandrBackEndCapstone.D.DBlog.entities.User;
 import LarionovOleksandrBackEndCapstone.D.DBlog.exceptions.BadRequestException;
 import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.user.NewUserDTO;
 import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.user.NewUserResponseDTO;
 import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.user.UserLogInDTO;
 import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.user.UserLogInResponseDTO;
+import LarionovOleksandrBackEndCapstone.D.DBlog.repositories.UserRepository;
 import LarionovOleksandrBackEndCapstone.D.DBlog.services.AuthService;
 import LarionovOleksandrBackEndCapstone.D.DBlog.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @RestController
@@ -25,13 +32,16 @@ public class AuthController {
     private AuthService authService;
     @Autowired
     private UserService userService;
-
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder bcrypt;
 
     @PostMapping("/login")
     public UserLogInResponseDTO UserLogInResponseDTO(@RequestBody @Validated UserLogInDTO body, BindingResult validation) {
-        if(validation.hasErrors()){
+        if (validation.hasErrors()) {
             throw new BadRequestException(validation.getAllErrors());
-        }else {
+        } else {
             String accessToken = authService.authenticateUser(body);
             return new UserLogInResponseDTO(accessToken);
         }
@@ -39,12 +49,15 @@ public class AuthController {
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public NewUserResponseDTO createUser(@RequestBody @Validated NewUserDTO newUserPayload, BindingResult validation) {
-        System.out.println(validation);
+    public NewUserResponseDTO saveUser(@RequestBody @Validated NewUserDTO body, BindingResult validation) {
         if (validation.hasErrors()) {
             throw new BadRequestException(validation.getAllErrors());
         } else {
-            User newUser = authService.saveNewUser(newUserPayload);
+            userRepository.findByEmail(body.getEmail()).ifPresent(user ->
+            {
+                throw new BadRequestException("l' email " + user.getEmail() + " è già in uso");
+            });
+            User newUser = authService.saveNewUser(body);
             return new NewUserResponseDTO(newUser.getId());
         }
     }

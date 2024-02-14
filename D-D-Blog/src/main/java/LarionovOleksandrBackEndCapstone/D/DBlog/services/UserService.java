@@ -62,6 +62,9 @@ public class UserService {
     public User findByEmail(String email) throws NotFoundException {
         return userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("User with  email: " + email + " not found!"));
     }
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
     public String uploadPicture(MultipartFile file, UUID userId) throws IOException {
         String url = (String) cloudinaryUploader.uploader()
                 .upload(file.getBytes(), ObjectUtils.emptyMap())

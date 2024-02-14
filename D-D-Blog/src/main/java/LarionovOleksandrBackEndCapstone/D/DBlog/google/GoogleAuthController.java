@@ -8,10 +8,8 @@ import LarionovOleksandrBackEndCapstone.D.DBlog.security.JWTTools;
 import LarionovOleksandrBackEndCapstone.D.DBlog.services.AuthService;
 import LarionovOleksandrBackEndCapstone.D.DBlog.services.UserService;
 import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,7 +33,7 @@ public class GoogleAuthController {
 
 
     @GetMapping("/callback")
-    public void googleCallback(@RequestParam("code") String authorizationCode, HttpServletResponse response) throws NotFoundException {
+    public ResponseEntity<AutPayload> googleCallback(@RequestParam("code") String authorizationCode, HttpServletResponse response) throws NotFoundException {
 
         GoogleAccessTokenResponse accessTokenResponse = googleAuthService.getAccessToken(authorizationCode);
         String accessToken = accessTokenResponse.getAccess_token();
@@ -48,6 +46,7 @@ public class GoogleAuthController {
         String profileImgUrl = userInfoResponse.getPicture();
 
         User user = null;
+        String token = null;
 
         try {
             user = userService.findByEmail(email);
@@ -66,10 +65,11 @@ public class GoogleAuthController {
             user = userService.findByEmail(email);
         }
         if (user != null) {
-            String token = jwtTools.createToken(user);
+            token = jwtTools.createToken(user);
             addAccessTokenToCookie(token, response);
-
-        }}
+        }
+            return  new ResponseEntity<>(new AutPayload(token), HttpStatus.OK);
+    }
         @GetMapping("/authorization-url")
         public ResponseEntity<String> getGoogleAuthorizationUrl () {
             return new ResponseEntity<>(googleAuthService.getAuthorizationUrl(), HttpStatus.OK);
@@ -78,7 +78,7 @@ public class GoogleAuthController {
     private void addAccessTokenToCookie(String accessToken, HttpServletResponse response) {
         Cookie cookie = new Cookie("access_token", accessToken);
         System.out.println(accessToken);
-        cookie.setPath("/3001/google/callback/");
+        cookie.setPath("/");
         cookie.setMaxAge(3600); // Tempo di scadenza del cookie in secondi (1 ora)
         cookie.setHttpOnly(false); // Il cookie sarà accessibile solo da codice server-side
         response.addCookie(cookie);

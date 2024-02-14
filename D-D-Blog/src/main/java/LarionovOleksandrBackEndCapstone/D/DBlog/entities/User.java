@@ -24,7 +24,7 @@ import java.util.UUID;
 @Table(name = "users")
 @Entity
 @JsonIgnoreProperties({"password", "authorities", "accountNonExpired", "enabled", "accountNonLocked",
-        "credentialsNonExpired", "username", "role", "secretAnswer","blogPostList","commentsList"})
+        "credentialsNonExpired", "role", "secretAnswer","blogPostList","commentsList"})
 public class User implements UserDetails {
     @Id
     @GeneratedValue
@@ -98,5 +98,12 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "userBirthday=" + userBirthday +
+                '}';
     }
 }

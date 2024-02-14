@@ -52,16 +52,6 @@ public class UserController {
             return authService.updateUser(currentUser, body);
         }
     }
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public NewUserResponseDTO saveUser(@RequestBody @Validated NewUserDTO body, BindingResult validation) {
-        if (validation.hasErrors()) {
-            throw new BadRequestException(validation.getAllErrors());
-        } else {
-            User newUser = authService.saveNewUser(body);
-            return new NewUserResponseDTO(newUser.getId());
-        }
-    }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")

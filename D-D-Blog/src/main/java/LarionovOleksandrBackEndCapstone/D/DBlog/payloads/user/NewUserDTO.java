@@ -19,7 +19,6 @@ public class NewUserDTO{
         @Pattern(regexp = "^[^<>{}$`]*$", message = "invalid characters")
         @Size(min = 2, max = 20, message = "Surname must be longer")
         private String surname;
-        @NotEmpty
         @Email
         private String email;
         @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$")
@@ -28,5 +27,6 @@ public class NewUserDTO{
         @Size(min = 8, max = 20, message = "Answer must be longer")
         private String secretAnswer;
         private String profileImg;
-        private LocalDate bDay;
+
+        private LocalDate userBirthday;
 }

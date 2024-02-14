@@ -62,7 +62,7 @@ public class CreateUsers implements CommandLineRunner {
         newUser.setEmail(email);
         newUser.setPassword("lollipoP1%");
         newUser.setSecretAnswer("peppapeppapeppa");
-        newUser.setBDay(LocalDate.of(1991, 5, 23));
+        newUser.setUserBirthday(LocalDate.of(1991, 5, 23));
         authService.saveNewUser(newUser);
         User user = userService.findByEmail(email);
         user.setRole(ROLE.ADMIN);
@@ -83,7 +83,7 @@ public class CreateUsers implements CommandLineRunner {
             newUser.setEmail(email);
             newUser.setPassword(password);
             newUser.setSecretAnswer(secret + secret);
-            newUser.setBDay(randomDate());
+            newUser.setUserBirthday(randomDate());
             authService.saveNewUser(newUser);
         }
     }
