@@ -108,6 +108,9 @@ public class AuthService {
             if (!body.password().isEmpty()) {
                 found.setPassword(bcrypt.encode(body.password()));
             }
+            if (body.userBirthday() != null) {
+            found.setUserBirthday(body.userBirthday());
+                }
         }
         return userRepository.save(found);
     }

@@ -1,5 +1,7 @@
 package LarionovOleksandrBackEndCapstone.D.DBlog.payloads.user;
 
+import java.time.LocalDate;
+
 public record UpdateUserDTO(
         String name,
 
@@ -9,5 +11,7 @@ public record UpdateUserDTO(
 
         String email,
 
-        String password){
+        String password,
+        LocalDate userBirthday
+) {
 }
