@@ -4,11 +4,13 @@ package LarionovOleksandrBackEndCapstone.D.DBlog.services;
 import LarionovOleksandrBackEndCapstone.D.DBlog.entities.BlogPost;
 import LarionovOleksandrBackEndCapstone.D.DBlog.entities.Comment;
 import LarionovOleksandrBackEndCapstone.D.DBlog.entities.User;
+import LarionovOleksandrBackEndCapstone.D.DBlog.entities.ZoneTopic;
 import LarionovOleksandrBackEndCapstone.D.DBlog.exceptions.NotFoundException;
 import LarionovOleksandrBackEndCapstone.D.DBlog.exceptions.UnauthorizedException;
 import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.BlogPostDTO;
 import LarionovOleksandrBackEndCapstone.D.DBlog.repositories.BlogPostRepository;
 import LarionovOleksandrBackEndCapstone.D.DBlog.repositories.UserRepository;
+import LarionovOleksandrBackEndCapstone.D.DBlog.repositories.ZoneTopicRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,9 @@ public class BlogPostService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private ZoneTopicRepository zoneTopicRepository;
+
     public Page<BlogPost> getAllBlogs(int page, int size, String orderBy) {
         if (size < 0)
             size = 10;
@@ -45,6 +50,15 @@ public class BlogPostService {
             size = 20;
         Pageable pageable = PageRequest.of(page, size, Sort.by(orderBy));
         return blogPostRepository.findByUserId(currentUser.getId(), pageable);
+    }
+
+    public Page<BlogPost> getAllBlogsByZoneTopicId(UUID zoneTopicId, int page, int size, String orderBy) {
+        if (size < 0)
+            size = 10;
+        if (size > 100)
+            size = 20;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(orderBy));
+        return blogPostRepository.findByZoneTopicId(zoneTopicId,pageable);
     }
 
     public List<BlogPost> getAll() {
@@ -63,6 +77,8 @@ public class BlogPostService {
         blogsUser.add(newBlog);
         user.setBlogPostList(blogsUser);
         newBlog.setUser(user);
+        ZoneTopic topic = zoneTopicRepository.findById(body.topicZoneId()).orElseThrow(() -> new NotFoundException("Topic non trovato"));
+        newBlog.setZoneTopic(topic);
         return blogPostRepository.save(newBlog);
     }
 

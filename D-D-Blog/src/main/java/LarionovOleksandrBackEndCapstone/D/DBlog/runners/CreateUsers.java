@@ -69,7 +69,7 @@ public class CreateUsers implements CommandLineRunner {
         userRepository.save(user);
     }
     public void users(){
-        for (int i = 0; i < 30; i++){
+        for (int i = 0; i < 5; i++){
             String name = faker.funnyName().name();
             String surname = faker.name().lastName();
             String username = faker.name().username();

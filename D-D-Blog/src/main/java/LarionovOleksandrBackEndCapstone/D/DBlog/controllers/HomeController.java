@@ -1,8 +1,11 @@
 package LarionovOleksandrBackEndCapstone.D.DBlog.controllers;
 
 
+
+import LarionovOleksandrBackEndCapstone.D.DBlog.entities.BlogPost;
 import LarionovOleksandrBackEndCapstone.D.DBlog.entities.User;
 import LarionovOleksandrBackEndCapstone.D.DBlog.entities.Zone;
+import LarionovOleksandrBackEndCapstone.D.DBlog.services.BlogPostService;
 import LarionovOleksandrBackEndCapstone.D.DBlog.services.ZoneService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,6 +20,8 @@ import java.util.UUID;
 public class HomeController {
     @Autowired
     private ZoneService zoneService;
+    @Autowired
+    private BlogPostService blogPostService;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -27,4 +32,18 @@ public class HomeController {
             @RequestParam(defaultValue = "orderNumber") String sortBy) {
         return zoneService.getAllZone(page, size, sortBy);
     }
+
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/topic/{id}")
+    public Page<BlogPost> getAllBlogsByTopicZoneId(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "creationBlogDate") String sortBy,
+            @PathVariable UUID id,
+            @AuthenticationPrincipal User currentUser
+    ) {
+        return blogPostService.getAllBlogsByZoneTopicId(id, page, size, sortBy);
+    }
+
 }

@@ -1,6 +1,6 @@
 package LarionovOleksandrBackEndCapstone.D.DBlog.runners;
 
-import LarionovOleksandrBackEndCapstone.D.DBlog.entities.ZoneTopic;
+
 import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.zone.ZoneDTO;
 import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.zone.ZoneTopicDTO;
 import LarionovOleksandrBackEndCapstone.D.DBlog.services.ZoneService;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 import java.util.Scanner;
 
 @Component
-@Order(4)
+@Order(2)
 public class CreateZoneAndTopics implements CommandLineRunner {
     @Autowired
     private ZoneService zoneService;
@@ -25,7 +25,7 @@ public class CreateZoneAndTopics implements CommandLineRunner {
         Scanner scanner = new Scanner(System.in);
         boolean errors = false;
         do {
-            System.out.println("Vuoi Procedere Con la Creazione Delle zone (y/n)");
+            System.out.println("Vuoi Procedere Con la Creazione Delle zone e topics (y/n)");
             String choice = scanner.nextLine();
             switch (choice.toLowerCase()) {
                 case "y" -> {

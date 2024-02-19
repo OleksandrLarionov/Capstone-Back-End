@@ -17,7 +17,7 @@ import java.util.Scanner;
 import java.util.UUID;
 
 @Component
-@Order(3)
+@Order(4)
 public class CreateComments implements CommandLineRunner {
     @Autowired
     UserRepository userRepository;
@@ -30,7 +30,7 @@ public class CreateComments implements CommandLineRunner {
         Scanner scanner = new Scanner(System.in);
         boolean errors = false;
         do {
-            System.out.println("Vuoi Procedere Con la Creazione Degli Blogs (y/n)");
+            System.out.println("Vuoi Procedere Con la Creazione Degli Commenti (y/n)");
             String choice = scanner.nextLine();
             switch (choice.toLowerCase()) {
                 case "y" -> {

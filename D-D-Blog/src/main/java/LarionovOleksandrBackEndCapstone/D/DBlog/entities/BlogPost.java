@@ -44,5 +44,7 @@ public class BlogPost {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Like> likes;
 
-
+    @JsonBackReference
+    @ManyToOne
+    private ZoneTopic zoneTopic;
 }

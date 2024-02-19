@@ -14,5 +14,6 @@ import java.util.UUID;
 public interface BlogPostRepository extends JpaRepository<BlogPost, UUID> {
     List<BlogPost> findByUserId (UUID userId);
     Page<BlogPost> findByUserId (UUID userId, Pageable pageable);
+    Page<BlogPost> findByZoneTopicId (UUID zoneTopicId, Pageable pageable);
     BlogPost findByUserIdAndId (UUID userId, UUID blogPostId);
 }

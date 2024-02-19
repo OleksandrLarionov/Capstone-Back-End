@@ -1,8 +1,10 @@
 package LarionovOleksandrBackEndCapstone.D.DBlog.runners;
 
 import LarionovOleksandrBackEndCapstone.D.DBlog.entities.User;
+import LarionovOleksandrBackEndCapstone.D.DBlog.entities.ZoneTopic;
 import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.BlogPostDTO;
 import LarionovOleksandrBackEndCapstone.D.DBlog.repositories.UserRepository;
+import LarionovOleksandrBackEndCapstone.D.DBlog.repositories.ZoneTopicRepository;
 import LarionovOleksandrBackEndCapstone.D.DBlog.services.BlogPostService;
 import com.github.javafaker.Faker;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,13 +15,16 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 
 @Component
-@Order(2)
+@Order(3)
 public class CreateBlogs implements CommandLineRunner {
     @Autowired
     BlogPostService blogPostService;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    private ZoneTopicRepository zoneTopicRepository;
     Faker faker = new Faker(new Locale("it"));
+
 
     @Override
     public void run(String... args) throws Exception {
@@ -43,7 +48,7 @@ public class CreateBlogs implements CommandLineRunner {
     }
 
     public void BlogPosts() {
-        for (int i = 0; i < 15; i++) {
+        for (int i = 0; i < 30; i++) {
             String title = faker.book().title();
             String cover = "no cover";
             String content = "Era una notte tempestosa, e la luna nascondeva timidamente dietro le nubi minacciose. Nel piccolo villaggio di Elmwood, circondato da boschi oscuri e intricati, si narra di una vecchia casa abbandonata, conosciuta solo come la Casa delle Ombre.\n" +
@@ -62,7 +67,8 @@ public class CreateBlogs implements CommandLineRunner {
                     title,
                     cover,
                     content,
-                    getRandomUserDB().getId());
+                    getRandomUserDB().getId(),
+                    getRandomZoneTopicFromDb().getId());
             blogPostService.saveBlogPost(newBlogPost);
         }
     }
@@ -73,4 +79,12 @@ public class CreateBlogs implements CommandLineRunner {
         int rmdIndex = rmd.nextInt(userList.size());
         return userList.get(rmdIndex);
     }
+
+    public ZoneTopic getRandomZoneTopicFromDb() {
+        List<ZoneTopic> zoneTopicList = zoneTopicRepository.findAll();
+        Random rndm = new Random();
+        int rndmIndex = rndm.nextInt(zoneTopicList.size());
+        return zoneTopicList.get(rndmIndex);
+    }
+
 }

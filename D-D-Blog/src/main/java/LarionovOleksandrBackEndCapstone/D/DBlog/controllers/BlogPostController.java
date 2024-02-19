@@ -24,7 +24,9 @@ public class BlogPostController {
     public Page<BlogPost> getAllBlogs(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "creationBlogDate") String sortBy) {
+            @RequestParam(defaultValue = "creationBlogDate") String sortBy,
+            @AuthenticationPrincipal User currentUser
+            ) {
         return blogPostService.getAllBlogs(page, size, sortBy);
     }
 

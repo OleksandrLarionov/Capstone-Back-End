@@ -7,6 +7,7 @@ public record BlogPostDTO(
         String title,
         String cover,
         String content,
-        UUID userId
+        UUID userId,
+        UUID topicZoneId
 ) {
 }
