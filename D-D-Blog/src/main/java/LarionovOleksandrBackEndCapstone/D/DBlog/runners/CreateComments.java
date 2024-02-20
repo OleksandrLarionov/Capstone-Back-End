@@ -47,15 +47,13 @@ public class CreateComments implements CommandLineRunner {
     }
 
     private void createComments() {
-        for (int i = 0; i < 20; i++){
+        for (int i = 0; i < 900; i++){
             UUID idBlog =getRandomBlogPost().getId();
                     CommentDTO newComment = new CommentDTO(
-
                     "Mitico",
-                    getRandomUserDB().getId(),
                             idBlog
             );
-            commentService.saveComment(newComment, idBlog);
+            commentService.saveComment(newComment, idBlog, getRandomUserDB().getId());
         }
 
     }

@@ -3,10 +3,14 @@ package LarionovOleksandrBackEndCapstone.D.DBlog.services;
 import LarionovOleksandrBackEndCapstone.D.DBlog.entities.BlogPost;
 import LarionovOleksandrBackEndCapstone.D.DBlog.entities.Like;
 import LarionovOleksandrBackEndCapstone.D.DBlog.entities.User;
+import LarionovOleksandrBackEndCapstone.D.DBlog.exceptions.LikeNotFoundException;
 import LarionovOleksandrBackEndCapstone.D.DBlog.exceptions.NotFoundException;
+import LarionovOleksandrBackEndCapstone.D.DBlog.repositories.BlogPostRepository;
 import LarionovOleksandrBackEndCapstone.D.DBlog.repositories.LikeRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 
 import java.util.UUID;
 
@@ -18,6 +22,8 @@ public class LikeService {
     private UserService userService;
     @Autowired
     private BlogPostService blogPostService;
+    @Autowired
+    private BlogPostRepository blogPostRepository;
 
     public Like addLike(Like like, UUID userId, UUID blogPostId) throws NotFoundException {
         User user = userService.findById(userId);
@@ -31,15 +37,16 @@ public class LikeService {
 
         Like likeCheck = likeRepository.findByUserIdAndBlogPostId(userId, blogPostId);
         if (likeCheck != null) {
-            throw new RuntimeException("You have already liked this article");
+            throw new LikeNotFoundException("You have already liked this article");
         }
 
         like.setBlogPost(blogPost);
         like.setUser(user);
         return likeRepository.save(like);
     }
-    public void deleteLike(UUID blogPostId, UUID userId) {
-        Like like = likeRepository.findByUserIdAndBlogPostId(blogPostId, userId);
+    @Transactional
+    public void deleteLike(UUID userId, UUID blogPostId) {
+        Like like = likeRepository.findByUserIdAndBlogPostId(userId, blogPostId);
         if (like != null) {
             like.getBlogPost().getLikes().remove(like);
             likeRepository.delete(like);

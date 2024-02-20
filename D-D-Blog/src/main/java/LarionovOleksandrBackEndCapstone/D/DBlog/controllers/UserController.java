@@ -3,8 +3,6 @@ package LarionovOleksandrBackEndCapstone.D.DBlog.controllers;
 import LarionovOleksandrBackEndCapstone.D.DBlog.entities.User;
 import LarionovOleksandrBackEndCapstone.D.DBlog.exceptions.BadRequestException;
 import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.user.UpdateUserDTO;
-import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.user.NewUserDTO;
-import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.user.NewUserResponseDTO;
 import LarionovOleksandrBackEndCapstone.D.DBlog.services.AuthService;
 import LarionovOleksandrBackEndCapstone.D.DBlog.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +62,13 @@ public class UserController {
     @PreAuthorize("hasAuthority('ADMIN')")
     public void findByIdAndDelete(@PathVariable UUID id) {
         userService.delete(id);
+    }
+
+    @DeleteMapping("/me/delete")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasAuthority('USER')")
+    public void findByIdAndDeleteMe(@AuthenticationPrincipal User currentUser) {
+        userService.delete(currentUser.getId());
     }
 
     @PostMapping("/me/uploadImage")

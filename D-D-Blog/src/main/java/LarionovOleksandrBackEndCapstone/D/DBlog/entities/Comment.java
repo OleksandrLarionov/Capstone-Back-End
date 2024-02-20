@@ -29,7 +29,6 @@ public class Comment {
     private LocalDateTime date;
 
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "user_id")
     private User user;
 

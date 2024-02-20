@@ -22,6 +22,6 @@ public class Like {
     private User user;
 
     @ManyToOne
-    @JsonBackReference
+    @JsonIgnore
     private BlogPost blogPost;
 }

@@ -43,17 +43,17 @@ public class CommentService {
         return commentRepository.findAll(pageable);
     }
 
-    public Comment saveComment(CommentDTO body, UUID blogId) {
-        User user = userService.findById(body.userId());
+    public Comment saveComment(CommentDTO body, UUID blogId, UUID userId) {
+        User user = userService.findById(userId);
         if (user == null) {
-            throw new NotFoundException("User not found with id: " + body.userId());
+            throw new NotFoundException("User not found with id: " + userId);
         }
         BlogPost blogPost = blogPostService.findById(body.blogId());
         if (blogPost == null) {
             throw new NotFoundException("Blog post not found with id: " + blogId);
         }
         List<Comment> blogPostCommentsList = commentRepository.findByBlogPostId(blogId);
-        List<Comment> commentsUserList = commentRepository.findByUserId(body.userId());
+        List<Comment> commentsUserList = commentRepository.findByUserId(userId);
         Comment newComment = new Comment();
         newComment.setDate(LocalDateTime.now());
         newComment.setComment(body.comment());

@@ -1,6 +1,7 @@
 package LarionovOleksandrBackEndCapstone.D.DBlog.controllers;
 
 import LarionovOleksandrBackEndCapstone.D.DBlog.entities.Comment;
+import LarionovOleksandrBackEndCapstone.D.DBlog.entities.User;
 import LarionovOleksandrBackEndCapstone.D.DBlog.exceptions.BadRequestException;
 import LarionovOleksandrBackEndCapstone.D.DBlog.exceptions.NotFoundException;
 import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.CommentDTO;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +30,7 @@ public class CommentController {
     public Page<Comment> getCommentsByBlogPostId(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "username") String sortBy,
+            @RequestParam(defaultValue = "date") String sortBy,
             @PathVariable UUID blogPostId) {
         return commentService.findCommentsByBlogPostId(blogPostId, page, size, sortBy);
     }
@@ -37,13 +39,14 @@ public class CommentController {
     @PostMapping("/blogPost/{blogPostId}")
     @ResponseStatus(HttpStatus.CREATED)
     public Comment createComment(
+            @AuthenticationPrincipal User currentUSer,
             @PathVariable UUID blogPostId,
             @RequestBody @Validated CommentDTO payload,
             BindingResult validation) throws NotFoundException {
         if (validation.hasErrors()) {
             throw new BadRequestException(validation.getAllErrors());
         } else {
-            return commentService.saveComment(payload, blogPostId);
+            return commentService.saveComment(payload, blogPostId, currentUSer.getId());
         }
     }
 

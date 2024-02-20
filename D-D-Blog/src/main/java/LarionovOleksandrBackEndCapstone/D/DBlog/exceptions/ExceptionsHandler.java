@@ -4,6 +4,7 @@ package LarionovOleksandrBackEndCapstone.D.DBlog.exceptions;
 import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.errorsPayloads.ErrorsDTO;
 import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.errorsPayloads.ErrorsPayloadWhitList;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -55,10 +56,16 @@ public class ExceptionsHandler {
         return ex.getMessage();
     }
 
+    @ExceptionHandler(LikeNotFoundException.class)
+    public ResponseEntity<String> handlerLikeNotFoundException(LikeNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+    }
+
     public static String newDateAndHour(){
         String pattern = "E, dd MMM yyyy HH:mm:ss";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
         String date = simpleDateFormat.format(new Date());
         return date;
     }
+
 }

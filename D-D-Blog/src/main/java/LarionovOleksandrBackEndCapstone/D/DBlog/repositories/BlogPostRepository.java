@@ -16,4 +16,6 @@ public interface BlogPostRepository extends JpaRepository<BlogPost, UUID> {
     Page<BlogPost> findByUserId (UUID userId, Pageable pageable);
     Page<BlogPost> findByZoneTopicId (UUID zoneTopicId, Pageable pageable);
     BlogPost findByUserIdAndId (UUID userId, UUID blogPostId);
+
+
 }

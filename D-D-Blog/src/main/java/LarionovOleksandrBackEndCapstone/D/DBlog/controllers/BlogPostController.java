@@ -1,8 +1,11 @@
 package LarionovOleksandrBackEndCapstone.D.DBlog.controllers;
 
 import LarionovOleksandrBackEndCapstone.D.DBlog.entities.BlogPost;
+import LarionovOleksandrBackEndCapstone.D.DBlog.entities.Like;
 import LarionovOleksandrBackEndCapstone.D.DBlog.entities.User;
+import LarionovOleksandrBackEndCapstone.D.DBlog.repositories.LikeRepository;
 import LarionovOleksandrBackEndCapstone.D.DBlog.services.BlogPostService;
+import LarionovOleksandrBackEndCapstone.D.DBlog.services.LikeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -18,6 +21,10 @@ import java.util.UUID;
 public class BlogPostController {
     @Autowired
     private BlogPostService blogPostService;
+    @Autowired
+    private LikeRepository likeRepository;
+    @Autowired
+    private LikeService likeService;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -37,6 +44,26 @@ public class BlogPostController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "creationBlogDate") String orderBy) {
         return blogPostService.findCurrentUserBlogs(currentUser, page, size, orderBy);
+    }
+    @GetMapping("me/likes/{id}")
+    public int likeCounter(@AuthenticationPrincipal User currentUser, @PathVariable UUID id){
+        return likeRepository.countByBlogPostId(id);
+    }
+    @PostMapping("/me/topic/{id}")
+    public void addLike (@AuthenticationPrincipal User currentUser, @PathVariable UUID id){
+        Like newLike = new Like();
+        likeService.addLike(newLike,currentUser.getId(),id);
+    }
+    @DeleteMapping("/me/like/delete/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void removeLike(@PathVariable UUID id, @AuthenticationPrincipal User currentUser) {
+        likeService.deleteLike(currentUser.getId(), id);
+    }
+
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public BlogPost getBlogById (@AuthenticationPrincipal User currentUser, @PathVariable UUID id){
+       return blogPostService.findById(id);
     }
 
     @DeleteMapping("/me/{id}")

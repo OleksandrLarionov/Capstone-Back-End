@@ -48,7 +48,7 @@ public class CreateBlogs implements CommandLineRunner {
     }
 
     public void BlogPosts() {
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 200; i++) {
             String title = faker.book().title();
             String cover = "no cover";
             String content = "Era una notte tempestosa, e la luna nascondeva timidamente dietro le nubi minacciose. Nel piccolo villaggio di Elmwood, circondato da boschi oscuri e intricati, si narra di una vecchia casa abbandonata, conosciuta solo come la Casa delle Ombre.\n" +

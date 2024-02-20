@@ -40,7 +40,6 @@ public class BlogPost {
     private List<Comment> commentsList;
 
     @OneToMany(mappedBy = "blogPost",cascade = CascadeType.ALL)
-    @JsonManagedReference
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Like> likes;
 
