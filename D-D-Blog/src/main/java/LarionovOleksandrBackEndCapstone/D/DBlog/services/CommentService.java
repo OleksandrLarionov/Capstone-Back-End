@@ -92,4 +92,8 @@ public class CommentService {
         return commentRepository.save(found);
     }
 
+    public Integer numberOfComments (UUID blogId){
+       return  commentRepository.findByBlogPostId(blogId).size();
+    }
+
 }

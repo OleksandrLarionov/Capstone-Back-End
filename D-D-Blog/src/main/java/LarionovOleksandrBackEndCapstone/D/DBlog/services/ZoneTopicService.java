@@ -2,6 +2,7 @@ package LarionovOleksandrBackEndCapstone.D.DBlog.services;
 
 import LarionovOleksandrBackEndCapstone.D.DBlog.entities.Zone;
 import LarionovOleksandrBackEndCapstone.D.DBlog.entities.ZoneTopic;
+import LarionovOleksandrBackEndCapstone.D.DBlog.exceptions.NotFoundException;
 import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.zone.ZoneTopicDTO;
 import LarionovOleksandrBackEndCapstone.D.DBlog.repositories.ZoneTopicRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
+
 
 @Service
 public class ZoneTopicService {
@@ -36,4 +37,7 @@ Zone foundZone = zoneService.findById(payload.zoneId());
 newZoneTopic.setZone(foundZone);
 zoneTopicRepository.save(newZoneTopic);
 }
+    public ZoneTopic findZoneTopicByName(String zoneName){
+        return zoneTopicRepository.findByName(zoneName).orElseThrow(() -> new NotFoundException("Zone: " + zoneName + " not found!"));
+    }
 }

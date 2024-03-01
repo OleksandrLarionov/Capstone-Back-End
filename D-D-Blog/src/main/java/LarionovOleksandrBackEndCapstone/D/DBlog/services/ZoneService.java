@@ -1,7 +1,7 @@
 package LarionovOleksandrBackEndCapstone.D.DBlog.services;
 
 
-import LarionovOleksandrBackEndCapstone.D.DBlog.entities.User;
+
 import LarionovOleksandrBackEndCapstone.D.DBlog.entities.Zone;
 import LarionovOleksandrBackEndCapstone.D.DBlog.exceptions.NotFoundException;
 import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.zone.ZoneDTO;

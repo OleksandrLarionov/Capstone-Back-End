@@ -71,9 +71,13 @@ public class AuthService {
             );
         }
         newUser.setRole(ROLE.USER);
-        newUser.setProfileImage("https://ui-avatars.com/api/?name=" +
-                body.getName().replaceAll(" ", "") + "+" +
-                body.getSurname().replaceAll(" ", ""));
+        if(body.getProfileImg() != null){
+            newUser.setProfileImage(body.getProfileImg());
+        } else {
+            newUser.setProfileImage("https://ui-avatars.com/api/?name=" +
+                    body.getName().replaceAll(" ", "") + "+" +
+                    body.getSurname().replaceAll(" ", ""));
+        }
         newUser.setBlogBackgroundImage("MUST TO BE SETTED");
         if (body.getSecretAnswer() != null && !body.getSecretAnswer().isEmpty()) {
             newUser.setSecretAnswer(bcrypt.encode(body.getSecretAnswer()));

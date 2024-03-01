@@ -6,6 +6,7 @@ import LarionovOleksandrBackEndCapstone.D.DBlog.exceptions.BadRequestException;
 import LarionovOleksandrBackEndCapstone.D.DBlog.exceptions.NotFoundException;
 import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.CommentDTO;
 import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.CommentResponseDTO;
+import LarionovOleksandrBackEndCapstone.D.DBlog.services.BlogPostService;
 import LarionovOleksandrBackEndCapstone.D.DBlog.services.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,6 +25,8 @@ import java.util.UUID;
 public class CommentController {
     @Autowired
     private CommentService commentService;
+    @Autowired
+    private BlogPostService blogPostService;
 
     @GetMapping("/blogPost/{blogPostId}")
     @ResponseStatus(HttpStatus.OK)
@@ -34,8 +37,13 @@ public class CommentController {
             @PathVariable UUID blogPostId) {
         return commentService.findCommentsByBlogPostId(blogPostId, page, size, sortBy);
     }
-
-
+    @GetMapping("/numberOfComments/{blogPostId}")
+    @ResponseStatus(HttpStatus.OK)
+    public Integer getNumberOfCommentsByblogPostId(
+          @AuthenticationPrincipal User currentUser,
+            @PathVariable UUID blogPostId) {
+        return commentService.numberOfComments(blogPostId);
+    }
     @PostMapping("/blogPost/{blogPostId}")
     @ResponseStatus(HttpStatus.CREATED)
     public Comment createComment(

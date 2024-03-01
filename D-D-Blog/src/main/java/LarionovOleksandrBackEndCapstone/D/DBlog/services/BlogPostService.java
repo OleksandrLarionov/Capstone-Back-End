@@ -9,6 +9,7 @@ import LarionovOleksandrBackEndCapstone.D.DBlog.exceptions.NotFoundException;
 import LarionovOleksandrBackEndCapstone.D.DBlog.exceptions.UnauthorizedException;
 import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.BlogPostDTO;
 import LarionovOleksandrBackEndCapstone.D.DBlog.repositories.BlogPostRepository;
+import LarionovOleksandrBackEndCapstone.D.DBlog.repositories.CommentRepository;
 import LarionovOleksandrBackEndCapstone.D.DBlog.repositories.UserRepository;
 import LarionovOleksandrBackEndCapstone.D.DBlog.repositories.ZoneTopicRepository;
 import jakarta.transaction.Transactional;
@@ -21,6 +22,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -31,6 +33,8 @@ public class BlogPostService {
     private BlogPostRepository blogPostRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private CommentRepository commentRepository;
 
     @Autowired
     private ZoneTopicRepository zoneTopicRepository;
@@ -71,7 +75,7 @@ public class BlogPostService {
         newBlog.setCategory(body.category());
         newBlog.setCover(body.cover());
         newBlog.setContent(body.content());
-        newBlog.setCreationBlogDate(LocalDate.now());
+        newBlog.setCreationBlogDate(LocalDateTime.now());
         User user = userRepository.findById(body.userId()).orElseThrow(() -> new NotFoundException("Utente non trovato"));
         List<BlogPost> blogsUser = blogPostRepository.findByUserId(body.userId());
         blogsUser.add(newBlog);
@@ -81,6 +85,7 @@ public class BlogPostService {
         newBlog.setZoneTopic(topic);
         return blogPostRepository.save(newBlog);
     }
+
 
     public BlogPost findById(UUID id) {
         return blogPostRepository.findById(id).orElseThrow(() -> new NotFoundException(String.valueOf(id)));

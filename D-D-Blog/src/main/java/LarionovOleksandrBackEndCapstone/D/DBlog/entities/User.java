@@ -42,7 +42,7 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private ROLE role;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<BlogPost> blogPostList;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)

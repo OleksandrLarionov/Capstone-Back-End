@@ -6,13 +6,19 @@ import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.BlogPostDTO;
 import LarionovOleksandrBackEndCapstone.D.DBlog.repositories.UserRepository;
 import LarionovOleksandrBackEndCapstone.D.DBlog.repositories.ZoneTopicRepository;
 import LarionovOleksandrBackEndCapstone.D.DBlog.services.BlogPostService;
+import LarionovOleksandrBackEndCapstone.D.DBlog.services.ZoneTopicService;
 import com.github.javafaker.Faker;
+import com.google.gson.stream.JsonReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
+
+import static com.google.gson.stream.JsonToken.BEGIN_ARRAY;
 
 @Component
 @Order(3)
@@ -23,6 +29,8 @@ public class CreateBlogs implements CommandLineRunner {
     UserRepository userRepository;
     @Autowired
     private ZoneTopicRepository zoneTopicRepository;
+    @Autowired
+    ZoneTopicService zoneTopicService;
     Faker faker = new Faker(new Locale("it"));
 
 
@@ -35,7 +43,8 @@ public class CreateBlogs implements CommandLineRunner {
             String choice = scanner.nextLine();
             switch (choice.toLowerCase()) {
                 case "y" -> {
-                    BlogPosts();
+//                    BlogPosts();
+                    Content();
                     errors = false;
                 }
                 case "n" -> errors = false;
@@ -47,32 +56,77 @@ public class CreateBlogs implements CommandLineRunner {
         } while (errors);
     }
 
-    public void BlogPosts() {
-        for (int i = 0; i < 200; i++) {
-            String title = faker.book().title();
-            String cover = "no cover";
-            String content = "Era una notte tempestosa, e la luna nascondeva timidamente dietro le nubi minacciose. Nel piccolo villaggio di Elmwood, circondato da boschi oscuri e intricati, si narra di una vecchia casa abbandonata, conosciuta solo come la Casa delle Ombre.\n" +
-                    "\n" +
-                    "Si diceva che la Casa delle Ombre fosse infestata da presenze sinistre e che nessuno osasse avvicinarsi troppo per paura di non tornare più indietro. Ma una giovane coppia, Anne e Mark, avventurieri di cuore, non credevano alle superstizioni. Decisero di sfidare il destino e di esplorare la casa in una notte di luna piena.\n" +
-                    "\n" +
-                    "Armatisi di torce e coraggio, si avventurarono nelle tenebre della casa. Appena entrarono, sentirono un freddo gelido avvolgere i loro corpi e un senso di oppressione li circondò. Le ombre sembravano danzare lungo le pareti, e strani sussurri riempirono l'aria.\n" +
-                    "\n" +
-                    "Man mano che esploravano le stanze decrepite, Anne e Mark incontrarono trappole insidiose e illusioni spaventose. Si sentivano sempre più intrappolati nella morsa della Casa delle Ombre, incapaci di trovare la via d'uscita.\n" +
-                    "\n" +
-                    "Quando finalmente trovarono una porta aperta, si trovarono di fronte a una stanza completamente oscura. Esitanti, entrarono, e all'improvviso la porta si chiuse alle loro spalle con un tonfo sordo. Nel buio totale, sentirono una risata malvagia risuonare intorno a loro, mentre le ombre si avvicinavano sempre di più.\n" +
-                    "\n" +
-                    "Da quel giorno, Anne e Mark scomparvero misteriosamente, e la Casa delle Ombre continuò a restare un luogo inquietante, dove le anime coraggiose rischiavano di perdersi per sempre tra le sue tenebre.";
-            BlogPostDTO newBlogPost = new BlogPostDTO(
-                    "Fantasy",
-                    title,
-                    cover,
-                    content,
-                    getRandomUserDB().getId(),
-                    getRandomZoneTopicFromDb().getId());
-            blogPostService.saveBlogPost(newBlogPost);
-        }
-    }
+    public void Content() {
+        String nomeFile = "src/main/resources/forum_content.json";
 
+        try (JsonReader reader = new JsonReader(new FileReader(nomeFile))) {
+            reader.beginObject(); // Inizio dell'oggetto JSON
+
+            Map<String, List<BlogPostDTO>> dataMap = new HashMap<>();
+
+            while (reader.hasNext()) {
+                String categoryName = reader.nextName();
+                if (reader.peek() == BEGIN_ARRAY) {
+                    reader.beginArray();
+
+                    List<BlogPostDTO> posts = new ArrayList<>();
+
+                    while (reader.hasNext()) {
+                        reader.beginObject();
+
+                        String category = null;
+                        String title = null;
+                        String cover = null;
+                        String content = null;
+
+                        while (reader.hasNext()) {
+                            String name = reader.nextName();
+                            if (name.equals("category")) {
+                                category = reader.nextString();
+                            } else if (name.equals("title")) {
+                                title = reader.nextString();
+                            } else if (name.equals("cover")) {
+                                cover = reader.nextString();
+                            } else if (name.equals("content")) {
+                                content = reader.nextString();
+                            } else {
+                                reader.skipValue();
+                            }
+                        }
+
+                        reader.endObject();
+
+                        // Creazione di un oggetto BlogPostDTO e salvataggio nella mappa
+                        if (category != null && title != null && content != null) {
+                            posts.add(new BlogPostDTO(category, title, cover, content, getRandomUserDB().getId(), zoneTopicService.findZoneTopicByName(categoryName).getId()));
+                        }
+                    }
+
+                    dataMap.put(categoryName, posts);
+                    reader.endArray(); // Fine lettura
+                } else {
+                    reader.skipValue();
+                }
+            }
+
+            reader.endObject(); // Fine JSON
+
+            // Stampa e salvataggio dei dati
+            for (Map.Entry<String, List<BlogPostDTO>> entry : dataMap.entrySet()) {
+                String category = entry.getKey();
+                List<BlogPostDTO> posts = entry.getValue();
+
+                System.out.println("Categoria: " + category);
+                for (BlogPostDTO post : posts) {
+                 blogPostService.saveBlogPost(post);
+                }
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
     public User getRandomUserDB() {
         List<User> userList = userRepository.findAll();
         Random rmd = new Random();

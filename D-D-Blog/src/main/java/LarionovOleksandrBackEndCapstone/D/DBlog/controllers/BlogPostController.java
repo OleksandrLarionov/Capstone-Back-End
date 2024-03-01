@@ -1,8 +1,13 @@
 package LarionovOleksandrBackEndCapstone.D.DBlog.controllers;
 
 import LarionovOleksandrBackEndCapstone.D.DBlog.entities.BlogPost;
+import LarionovOleksandrBackEndCapstone.D.DBlog.entities.Comment;
 import LarionovOleksandrBackEndCapstone.D.DBlog.entities.Like;
 import LarionovOleksandrBackEndCapstone.D.DBlog.entities.User;
+import LarionovOleksandrBackEndCapstone.D.DBlog.exceptions.BadRequestException;
+import LarionovOleksandrBackEndCapstone.D.DBlog.exceptions.NotFoundException;
+import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.BlogPostDTO;
+import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.CommentDTO;
 import LarionovOleksandrBackEndCapstone.D.DBlog.repositories.LikeRepository;
 import LarionovOleksandrBackEndCapstone.D.DBlog.services.BlogPostService;
 import LarionovOleksandrBackEndCapstone.D.DBlog.services.LikeService;
@@ -11,6 +16,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -64,6 +71,19 @@ public class BlogPostController {
     @ResponseStatus(HttpStatus.OK)
     public BlogPost getBlogById (@AuthenticationPrincipal User currentUser, @PathVariable UUID id){
        return blogPostService.findById(id);
+    }
+
+    @PostMapping("/topic/addNewPost")
+    @ResponseStatus(HttpStatus.CREATED)
+    public BlogPost createBlogPost(
+            @AuthenticationPrincipal User currentUSer,
+            @RequestBody @Validated BlogPostDTO payload,
+            BindingResult validation) throws NotFoundException {
+        if (validation.hasErrors()) {
+            throw new BadRequestException(validation.getAllErrors());
+        } else {
+            return blogPostService.saveBlogPost(payload);
+        }
     }
 
     @DeleteMapping("/me/{id}")
