@@ -1,7 +1,9 @@
 package LarionovOleksandrBackEndCapstone.D.DBlog.services;
 
+import LarionovOleksandrBackEndCapstone.D.DBlog.ENUMS.ROLE;
 import LarionovOleksandrBackEndCapstone.D.DBlog.entities.User;
 import LarionovOleksandrBackEndCapstone.D.DBlog.exceptions.NotFoundException;
+import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.user.UserEmailDTO;
 import LarionovOleksandrBackEndCapstone.D.DBlog.repositories.UserRepository;
 
 import com.cloudinary.Cloudinary;
@@ -62,6 +64,8 @@ public class UserService {
     public User findByEmail(String email) throws NotFoundException {
         return userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("User with  email: " + email + " not found!"));
     }
+
+
     public User findByUsername(String username) {
         return userRepository.findByUsername(username);
     }

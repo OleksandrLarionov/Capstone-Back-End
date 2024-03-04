@@ -1,8 +1,11 @@
 package LarionovOleksandrBackEndCapstone.D.DBlog.controllers;
 
+import LarionovOleksandrBackEndCapstone.D.DBlog.ENUMS.ROLE;
 import LarionovOleksandrBackEndCapstone.D.DBlog.entities.User;
 import LarionovOleksandrBackEndCapstone.D.DBlog.exceptions.BadRequestException;
+import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.user.CheckResponse;
 import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.user.UpdateUserDTO;
+import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.user.UserEmailDTO;
 import LarionovOleksandrBackEndCapstone.D.DBlog.services.AuthService;
 import LarionovOleksandrBackEndCapstone.D.DBlog.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +53,19 @@ public class UserController {
             return authService.updateUser(currentUser, body);
         }
     }
+    @PostMapping("/me/check")
+    @ResponseStatus(HttpStatus.OK)
+    public CheckResponse responseRole(@AuthenticationPrincipal User currentUser, @RequestBody @Validated UserEmailDTO payload, BindingResult validation) {
+        if (validation.hasErrors()) {
+            throw new BadRequestException(validation.getAllErrors());
+        } else {
+            User user = userService.findByEmail(payload.email());
+            ROLE userRole = user.getRole();
+            boolean isAdmin = userRole == ROLE.ADMIN;
+            return new CheckResponse(isAdmin);
+        }
+    }
+
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
