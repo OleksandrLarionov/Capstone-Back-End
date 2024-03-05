@@ -37,7 +37,7 @@ public class JWTAuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         if (!request.getMethod().equals("OPTIONS")) {
             String requestPath = request.getServletPath();
-            if (requestPath.startsWith("/google/callback")) {
+            if (requestPath.startsWith("/google/callback") || requestPath.startsWith("/v3/api-docs") || requestPath.startsWith("/swagger-ui")) {
                 filterChain.doFilter(request, response);
                 return;
             }
@@ -63,10 +63,15 @@ public class JWTAuthFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String servletPath = request.getServletPath();
-        return new AntPathMatcher().match("/auth/**", servletPath)
-                || servletPath.equals("/google/authorization-url")
-                || servletPath.startsWith("/google/callback")
-                || servletPath.equals("/favicon.ico")
-                || servletPath.equals("/login");
+        return (
+                servletPath.startsWith("/v3/api-docs")
+                        || servletPath.startsWith("/swagger-ui")
+                        || servletPath.equals("/google/authorization-url")
+                        || servletPath.startsWith("/google/callback")
+                        || servletPath.equals("/favicon.ico")
+                        || servletPath.equals("/login")
+                        || new AntPathMatcher().match("/auth/**", servletPath)
+        );
+
     }
 }

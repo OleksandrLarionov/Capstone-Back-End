@@ -4,6 +4,7 @@ import LarionovOleksandrBackEndCapstone.D.DBlog.entities.BlogPost;
 import LarionovOleksandrBackEndCapstone.D.DBlog.entities.Comment;
 import LarionovOleksandrBackEndCapstone.D.DBlog.entities.User;
 import LarionovOleksandrBackEndCapstone.D.DBlog.exceptions.NotFoundException;
+import LarionovOleksandrBackEndCapstone.D.DBlog.exceptions.UnauthorizedException;
 import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.CommentDTO;
 import LarionovOleksandrBackEndCapstone.D.DBlog.repositories.BlogPostRepository;
 import LarionovOleksandrBackEndCapstone.D.DBlog.repositories.CommentRepository;
@@ -73,6 +74,15 @@ public class CommentService {
     @Transactional
     public void delete(UUID id) {
         Comment found = this.findById(id);
+        commentRepository.delete(found);
+    }
+
+    @Transactional
+    public void deleteComment(UUID id, UUID commentId) {
+        Comment found = this.findById(commentId);
+        if (!found.getUser().getId().equals(id)) {
+            throw new UnauthorizedException("Non sei autorizzato a cancellare questo commento");
+        }
         commentRepository.delete(found);
     }
 
