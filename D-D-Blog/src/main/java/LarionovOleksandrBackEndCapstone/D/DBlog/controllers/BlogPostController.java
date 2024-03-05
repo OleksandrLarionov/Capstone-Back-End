@@ -86,7 +86,7 @@ public class BlogPostController {
         }
     }
 
-    @DeleteMapping("/me/{id}")
+    @DeleteMapping("/me/delete/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void findByIdAndDeleteCurrentUserBlog(@PathVariable UUID id, @AuthenticationPrincipal User currentUser) {
         blogPostService.deleteBlog(currentUser, id);

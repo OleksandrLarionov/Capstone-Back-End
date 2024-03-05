@@ -47,6 +47,7 @@ public class BlogPostService {
         Pageable pageable = PageRequest.of(page, size, Sort.by(orderBy));
         return blogPostRepository.findAll(pageable);
     }
+
     public Page<BlogPost> findCurrentUserBlogs(User currentUser, int page, int size, String orderBy) {
         if (size < 0)
             size = 10;
@@ -62,7 +63,7 @@ public class BlogPostService {
         if (size > 100)
             size = 20;
         Pageable pageable = PageRequest.of(page, size, Sort.by(orderBy));
-        return blogPostRepository.findByZoneTopicId(zoneTopicId,pageable);
+        return blogPostRepository.findByZoneTopicId(zoneTopicId, pageable);
     }
 
     public List<BlogPost> getAll() {
@@ -73,7 +74,11 @@ public class BlogPostService {
         BlogPost newBlog = new BlogPost();
         newBlog.setTitle(body.title());
         newBlog.setCategory(body.category());
-        newBlog.setCover(body.cover());
+        if(body.cover() != null){
+            newBlog.setCover(body.cover());
+        } else {
+         newBlog.setCover("http://res.cloudinary.com/dfzqwrrvb/image/upload/v1709294064/vyu1s5ujdfzrgxvzdeh2.webp");
+        }
         newBlog.setContent(body.content());
         newBlog.setCreationBlogDate(LocalDateTime.now());
         User user = userRepository.findById(body.userId()).orElseThrow(() -> new NotFoundException("Utente non trovato"));
@@ -114,12 +119,13 @@ public class BlogPostService {
                 .collect(Collectors.toList());
         return categoryList;
     }
-
-    public void deleteBlog(User currentUser, UUID id){
-        BlogPost found = blogPostRepository.findByUserIdAndId(currentUser.getId(), id);
-        if (found != null){
-            blogPostRepository.delete(found);
-        }else throw new UnauthorizedException("You have not authority");
+@Transactional
+    public void deleteBlog(User currentUser, UUID id) {
+        BlogPost found = this.findById(id);
+        if (!found.getUser().getId().equals(currentUser.getId())) {
+            throw new UnauthorizedException("Non sei autorizzato a cancellare questo post");
+        }
+         blogPostRepository.delete(found);
     }
 
 }
