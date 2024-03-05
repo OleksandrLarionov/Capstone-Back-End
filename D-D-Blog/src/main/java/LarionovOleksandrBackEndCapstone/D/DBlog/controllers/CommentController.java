@@ -81,7 +81,6 @@ public class CommentController {
 
     @DeleteMapping("/me/delete/{commentId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasAuthority('USER')")
     public void findAndDeleteMyComment(@AuthenticationPrincipal User currentUser, @PathVariable UUID commentId) {
         commentService.deleteComment(currentUser.getId(), commentId);
     }
