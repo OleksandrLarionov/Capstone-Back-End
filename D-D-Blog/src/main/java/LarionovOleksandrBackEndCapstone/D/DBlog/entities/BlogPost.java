@@ -38,7 +38,7 @@ public class BlogPost {
     @JsonIgnore
     private List<Comment> commentsList;
 
-    @OneToMany(mappedBy = "blogPost",cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "blogPost",cascade = CascadeType.ALL)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Like> likes;
 
