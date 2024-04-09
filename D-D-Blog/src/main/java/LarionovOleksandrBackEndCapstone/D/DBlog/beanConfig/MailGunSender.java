@@ -1,14 +1,18 @@
 package LarionovOleksandrBackEndCapstone.D.DBlog.beanConfig;
 
 
-import LarionovOleksandrBackEndCapstone.D.DBlog.entities.User;
+
+import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.user.NewUserDTO;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.templatemode.TemplateMode;
+import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
-import static LarionovOleksandrBackEndCapstone.D.DBlog.exceptions.ExceptionsHandler.newDateAndHour;
 
 
 @Component
@@ -18,28 +22,42 @@ public class MailGunSender {
     private String mailGunDomain;
     private String myEmail;
 
-    public MailGunSender(@Value("${mailgun.apikey}") String mailGunKey,
-                         @Value("${mailgun.domainname}") String mailGunDomain,
-                         @Value("${myEmail}") String myEmail) {
+
+    public MailGunSender(@Value("${API_MAIL_KEY}") String mailGunKey,
+                         @Value("${MAILGUN_DOMAIN_MAIL}") String mailGunDomain,
+                         @Value("${MY_EMAIL}") String myEmail) {
         this.myEmail = myEmail;
         this.mailGunKey = mailGunKey;
         this.mailGunDomain = mailGunDomain;
     }
 
-    public void sendMail(String recipient, User user) {
+    public void sendMail(String recipient, NewUserDTO payload) {
+        // Configura il risolutore del template
+        ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
+        templateResolver.setPrefix("templates/"); // Imposta la directory dei  template HTML
+        templateResolver.setSuffix(".html");
+        templateResolver.setTemplateMode(TemplateMode.HTML);
+
+        // Crea il motore del template
+        TemplateEngine templateEngine = new TemplateEngine();
+        templateEngine.setTemplateResolver(templateResolver);
+
+        Context context = new Context();
+        context.setVariable("name", payload.getName());
+        context.setVariable("email", payload.getEmail()); // variabili all'interno del template
+        context.setVariable("password", payload.getPassword());
+
+        // Processa il template  per ottenere il corpo dell'email HTML
+        String htmlContent  = templateEngine.process("registration", context);
+
         HttpResponse<JsonNode> response = Unirest.post("https://api.mailgun.net/v3/" + this.mailGunDomain + "/messages")
                 .basicAuth("api", this.mailGunKey)
                 .queryString("from", "D&D Forum" + this.myEmail)
                 .queryString("to", recipient)
                 .queryString("subject", "Welcome")
-                .queryString("text", "Siamo lieti di informarti che la tua registrazione è avvenuta con successo!" +
-                        "\n Username: " + user.getUsername() +
-                        "\n Password: " + user.getPassword() +
-                        "\n" + "\n" + "\n" + "Se hai domande o dubbi, non esitare a contattare il nostro team di supporto." +
-                        "\n Grazie per la tua collaborazione!" +
-                        "\n Cordiali Saluti," +
-                        "\n D&D STAFF" +
-                        "\n" + newDateAndHour())
+                .queryString("text", "Test sending registration mail")
+                .field("html", htmlContent )
+
                 .asJson();
     }
 }

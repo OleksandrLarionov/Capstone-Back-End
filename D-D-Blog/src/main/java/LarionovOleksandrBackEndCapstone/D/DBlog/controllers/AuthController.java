@@ -67,7 +67,7 @@ public class AuthController {
                 throw new BadRequestException("l' email " + user.getEmail() + " è già in uso");
             });
             User newUser = authService.saveNewUser(body);
-            mailGunSender.sendMail(body.getEmail(), newUser);
+            mailGunSender.sendMail(body.getEmail(), body);
             return new NewUserResponseDTO(newUser.getId());
         }
     }

@@ -10,6 +10,7 @@ import LarionovOleksandrBackEndCapstone.D.DBlog.services.ZoneTopicService;
 import com.github.javafaker.Faker;
 import com.google.gson.stream.JsonReader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -23,6 +24,8 @@ import static com.google.gson.stream.JsonToken.BEGIN_ARRAY;
 @Component
 @Order(3)
 public class CreateBlogs implements CommandLineRunner {
+    @Value("${app.init.createBlogsEnabled:false}")
+    private boolean createBlogsEnabled;
     @Autowired
     BlogPostService blogPostService;
     @Autowired
@@ -36,6 +39,10 @@ public class CreateBlogs implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+        if (!createBlogsEnabled) {
+            return; //
+        }
+
         Scanner scanner = new Scanner(System.in);
         boolean errors = false;
         do {

@@ -10,6 +10,7 @@ import LarionovOleksandrBackEndCapstone.D.DBlog.services.CommentService;
 import LarionovOleksandrBackEndCapstone.D.DBlog.services.LikeService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -22,6 +23,8 @@ import java.util.UUID;
 @Component
 @Order(4)
 public class CreateComments implements CommandLineRunner {
+    @Value("${app.init.createCommentsEnabled:false}")
+    private boolean createCommentsEnabled;
     @Autowired
     UserRepository userRepository;
     @Autowired
@@ -32,6 +35,9 @@ public class CreateComments implements CommandLineRunner {
     LikeService likeService;
     @Override
     public void run(String... args) throws Exception {
+        if (!createCommentsEnabled) {
+            return;
+        }
         Scanner scanner = new Scanner(System.in);
         boolean errors = false;
         do {

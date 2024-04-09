@@ -22,6 +22,8 @@ import java.util.concurrent.ThreadLocalRandom;
 @Component
 @Order(1)
 public class CreateUsers implements CommandLineRunner {
+    @Value("${app.init.createUsersEnabled:false}")
+    private boolean createUsersEnabled;
     @Autowired
     private UserService userService;
     @Autowired
@@ -34,6 +36,9 @@ public class CreateUsers implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+        if (!createUsersEnabled) {
+            return;
+        }
         Scanner scanner = new Scanner(System.in);
         boolean errors = false;
         do {

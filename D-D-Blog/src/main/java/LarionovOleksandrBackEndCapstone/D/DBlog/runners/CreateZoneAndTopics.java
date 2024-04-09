@@ -6,6 +6,7 @@ import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.zone.ZoneTopicDTO;
 import LarionovOleksandrBackEndCapstone.D.DBlog.services.ZoneService;
 import LarionovOleksandrBackEndCapstone.D.DBlog.services.ZoneTopicService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 
 import org.springframework.core.annotation.Order;
@@ -16,12 +17,17 @@ import java.util.Scanner;
 @Component
 @Order(2)
 public class CreateZoneAndTopics implements CommandLineRunner {
+    @Value("${app.init.createZoneAndTopicsEnabled:false}")
+    private boolean createZoneAndTopicsEnabled;
     @Autowired
     private ZoneService zoneService;
     @Autowired
     private ZoneTopicService zoneTopicService;
     @Override
     public void run(String... args) throws Exception {
+        if (!createZoneAndTopicsEnabled) {
+            return;
+        }
         Scanner scanner = new Scanner(System.in);
         boolean errors = false;
         do {
