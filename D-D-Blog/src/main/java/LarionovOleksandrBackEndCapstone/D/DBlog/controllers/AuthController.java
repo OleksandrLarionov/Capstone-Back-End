@@ -2,6 +2,7 @@ package LarionovOleksandrBackEndCapstone.D.DBlog.controllers;
 
 
 import LarionovOleksandrBackEndCapstone.D.DBlog.ENUMS.ROLE;
+import LarionovOleksandrBackEndCapstone.D.DBlog.beanConfig.MailGunSender;
 import LarionovOleksandrBackEndCapstone.D.DBlog.entities.BlogPost;
 import LarionovOleksandrBackEndCapstone.D.DBlog.entities.Comment;
 import LarionovOleksandrBackEndCapstone.D.DBlog.entities.User;
@@ -42,6 +43,8 @@ public class AuthController {
     private PasswordEncoder bcrypt;
     @Autowired
     private JWTTools jwtTools;
+    @Autowired
+    private MailGunSender mailGunSender;
 
     @PostMapping("/login")
     public UserLogInResponseDTO UserLogInResponseDTO(@RequestBody @Validated UserLogInDTO body, BindingResult validation) {
@@ -64,18 +67,9 @@ public class AuthController {
                 throw new BadRequestException("l' email " + user.getEmail() + " è già in uso");
             });
             User newUser = authService.saveNewUser(body);
+            mailGunSender.sendMail(body.getEmail(), newUser);
             return new NewUserResponseDTO(newUser.getId());
         }
     }
-/*@PostMapping("/verify-token")
-public ResponseEntity<String> checkToken(@RequestBody AutPayload token) {
-    try {
-        jwtTools.verifyToken(token.accessToken());
-        return ResponseEntity.ok("Token valido");
-    } catch (UnauthorizedException e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
-    } catch (Exception e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Errore durante la verifica del token");
-    }
-}*/
+
 }
