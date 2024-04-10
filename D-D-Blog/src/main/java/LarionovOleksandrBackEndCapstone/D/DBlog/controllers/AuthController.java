@@ -1,14 +1,10 @@
 package LarionovOleksandrBackEndCapstone.D.DBlog.controllers;
 
 
-import LarionovOleksandrBackEndCapstone.D.DBlog.ENUMS.ROLE;
+
 import LarionovOleksandrBackEndCapstone.D.DBlog.beanConfig.MailGunSender;
-import LarionovOleksandrBackEndCapstone.D.DBlog.entities.BlogPost;
-import LarionovOleksandrBackEndCapstone.D.DBlog.entities.Comment;
 import LarionovOleksandrBackEndCapstone.D.DBlog.entities.User;
 import LarionovOleksandrBackEndCapstone.D.DBlog.exceptions.BadRequestException;
-import LarionovOleksandrBackEndCapstone.D.DBlog.exceptions.UnauthorizedException;
-import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.AutPayload;
 import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.user.NewUserDTO;
 import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.user.NewUserResponseDTO;
 import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.user.UserLogInDTO;
@@ -19,15 +15,12 @@ import LarionovOleksandrBackEndCapstone.D.DBlog.services.AuthService;
 import LarionovOleksandrBackEndCapstone.D.DBlog.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 
 @RestController
@@ -43,8 +36,7 @@ public class AuthController {
     private PasswordEncoder bcrypt;
     @Autowired
     private JWTTools jwtTools;
-    @Autowired
-    private MailGunSender mailGunSender;
+
 
     @PostMapping("/login")
     public UserLogInResponseDTO UserLogInResponseDTO(@RequestBody @Validated UserLogInDTO body, BindingResult validation) {
@@ -67,9 +59,13 @@ public class AuthController {
                 throw new BadRequestException("l' email " + user.getEmail() + " è già in uso");
             });
             User newUser = authService.saveNewUser(body);
-            mailGunSender.sendMail(body.getEmail(), body);
             return new NewUserResponseDTO(newUser.getId());
         }
     }
+
+    @GetMapping("/register/confirm/{token}")
+    public String confirm(@AuthenticationPrincipal User currentUser, @PathVariable("token") String token){
+        return "pass";
+    };
 
 }

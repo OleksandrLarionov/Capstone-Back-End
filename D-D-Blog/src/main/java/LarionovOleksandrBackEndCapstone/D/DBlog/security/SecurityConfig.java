@@ -29,32 +29,36 @@ public class SecurityConfig {
 
     @Autowired
     private JWTAuthFilter jwtAuthFilter;
+
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.formLogin(AbstractHttpConfigurer::disable);
-        httpSecurity.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-        httpSecurity.csrf(AbstractHttpConfigurer::disable);
-        httpSecurity.cors(withDefaults());
-        httpSecurity.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-        httpSecurity.authorizeHttpRequests(request -> request.requestMatchers("/**").permitAll());
-        httpSecurity.authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/").permitAll();
-                    auth.requestMatchers("/google/**").permitAll();
-                    auth.requestMatchers("/google/callback").permitAll();
-                    auth.requestMatchers(HttpMethod.POST, "/google/callback/**").permitAll();
-                });
-        httpSecurity.oauth2Login(withDefaults());
-        httpSecurity.formLogin(withDefaults());
-
-        httpSecurity.authorizeHttpRequests(auth -> {
-            auth.requestMatchers("/auth/**", "/login/**").permitAll();
-        });
+        httpSecurity
+                .formLogin(AbstractHttpConfigurer::disable)
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .csrf(AbstractHttpConfigurer::disable)
+                .cors(withDefaults())
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .authorizeHttpRequests(request ->
+                        request
+                                .requestMatchers("/**").permitAll())
+                .authorizeHttpRequests(auth -> {
+                    auth
+                            .requestMatchers("/").permitAll()
+                            .requestMatchers("/google/**").permitAll()
+                            .requestMatchers("/google/callback").permitAll()
+                            .requestMatchers(HttpMethod.POST, "/google/callback/**").permitAll()
+                            .requestMatchers("/auth/**", "/login/**").permitAll();
+                })
+                .oauth2Login(withDefaults())
+                .formLogin(withDefaults());
         return httpSecurity.build();
     }
+
     @Bean
     PasswordEncoder getPWEncoder() {
         return new BCryptPasswordEncoder(11);
     }
+
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();

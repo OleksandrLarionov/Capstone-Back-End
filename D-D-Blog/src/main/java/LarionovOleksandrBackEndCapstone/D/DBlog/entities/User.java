@@ -29,6 +29,7 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue
     private UUID id;
+
     private String username;
     private String name;
     private String surname;
@@ -39,6 +40,8 @@ public class User implements UserDetails {
     private String blogBackgroundImage;
     private LocalDate userCreationDate;
     private LocalDate userBirthday;
+    private Boolean locked;
+    private Boolean enabled;
     @Enumerated(EnumType.STRING)
     private ROLE role;
 
@@ -48,10 +51,12 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Comment> commentsList;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private ConfirmValidationToken confirmValidationToken;
 
     public User(
             String username, String name, String surname,
-            String email, String password, String secretAnswer) {
+            String email, String password, String secretAnswer, Boolean enabled, Boolean locked) {
         this.username = username;
         this.name = name;
         this.surname = surname;
@@ -66,6 +71,8 @@ public class User implements UserDetails {
         this.blogPostList = new ArrayList<>();
         this.commentsList = new ArrayList<>();
         this.userCreationDate = LocalDate.now();
+        this.locked = false;
+        this.enabled = false;
     }
 
     public void addCommentToList (Comment comment){
@@ -87,7 +94,7 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return !locked;
     }
 
     @Override
@@ -97,7 +104,7 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return enabled;
     }
 
     @Override

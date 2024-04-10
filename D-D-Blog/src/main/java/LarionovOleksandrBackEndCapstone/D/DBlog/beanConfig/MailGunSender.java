@@ -31,7 +31,8 @@ public class MailGunSender {
         this.mailGunDomain = mailGunDomain;
     }
 
-    public void sendMail(String recipient, NewUserDTO payload) {
+    public void sendMail(String recipient, NewUserDTO payload, String token) {
+        String url = "http://localhost:3000/auth/register/confirm?token=" + token;
         // Configura il risolutore del template
         ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
         templateResolver.setPrefix("templates/"); // Imposta la directory dei  template HTML
@@ -46,6 +47,7 @@ public class MailGunSender {
         context.setVariable("name", payload.getName());
         context.setVariable("email", payload.getEmail()); // variabili all'interno del template
         context.setVariable("password", payload.getPassword());
+        context.setVariable("url", url);
 
         // Processa il template  per ottenere il corpo dell'email HTML
         String htmlContent  = templateEngine.process("registration", context);

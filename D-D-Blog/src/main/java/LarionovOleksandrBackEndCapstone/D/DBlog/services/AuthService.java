@@ -1,6 +1,7 @@
 package LarionovOleksandrBackEndCapstone.D.DBlog.services;
 
 import LarionovOleksandrBackEndCapstone.D.DBlog.ENUMS.ROLE;
+import LarionovOleksandrBackEndCapstone.D.DBlog.beanConfig.MailGunSender;
 import LarionovOleksandrBackEndCapstone.D.DBlog.entities.BlogPost;
 import LarionovOleksandrBackEndCapstone.D.DBlog.entities.Comment;
 import LarionovOleksandrBackEndCapstone.D.DBlog.entities.User;
@@ -30,6 +31,8 @@ public class AuthService {
     private PasswordEncoder bcrypt;
     @Autowired
     private JWTTools jwtTools;
+    @Autowired
+    private MailGunSender mailGunSender;
 
     public String authenticateUser(UserLogInDTO body) {
         User user = userService.findByEmail(body.email());
@@ -39,6 +42,7 @@ public class AuthService {
             throw new UnauthorizedException("Credenziali non valide!");
         }
     }
+
 
     public User saveNewUser(NewUserDTO body) {
         userRepository.findByEmail(body.getEmail()).ifPresent(user ->
@@ -82,7 +86,8 @@ public class AuthService {
         if (body.getSecretAnswer() != null && !body.getSecretAnswer().isEmpty()) {
             newUser.setSecretAnswer(bcrypt.encode(body.getSecretAnswer()));
         }
-
+        String token = jwtTools.createValidationToken(newUser);
+        mailGunSender.sendMail(body.getEmail(), body, token);
         return userRepository.save(newUser);
     }
 

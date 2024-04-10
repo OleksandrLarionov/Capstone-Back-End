@@ -26,6 +26,15 @@ public class JWTTools {
                 .compact();
     }
 
+    public String createValidationToken(User user) {
+        return Jwts.builder()
+                .subject(String.valueOf(user.getId()))
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 15))
+                .signWith(Keys.hmacShaKeyFor(secret.getBytes()))
+                .compact();
+    }
+
     public void verifyToken(String token) {
         try {
             Jwts.parser().verifyWith(Keys.hmacShaKeyFor(secret.getBytes())).build().parse(token);
