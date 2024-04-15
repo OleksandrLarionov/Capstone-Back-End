@@ -35,7 +35,7 @@ public class User implements UserDetails {
     private String surname;
     private String email;
     private String password;
-    private String secretAnswer;
+    private String secretAnswer; //TODO : implementare una classe di domande e un check per il controllo
     private String profileImage;
     private String blogBackgroundImage;
     private LocalDate userCreationDate;
@@ -51,8 +51,6 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Comment> commentsList;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private ConfirmValidationToken confirmValidationToken;
 
     public User(
             String username, String name, String surname,

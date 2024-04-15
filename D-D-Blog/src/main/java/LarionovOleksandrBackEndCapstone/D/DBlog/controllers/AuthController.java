@@ -2,7 +2,7 @@ package LarionovOleksandrBackEndCapstone.D.DBlog.controllers;
 
 
 
-import LarionovOleksandrBackEndCapstone.D.DBlog.beanConfig.MailGunSender;
+
 import LarionovOleksandrBackEndCapstone.D.DBlog.entities.User;
 import LarionovOleksandrBackEndCapstone.D.DBlog.exceptions.BadRequestException;
 import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.user.NewUserDTO;
@@ -15,7 +15,6 @@ import LarionovOleksandrBackEndCapstone.D.DBlog.services.AuthService;
 import LarionovOleksandrBackEndCapstone.D.DBlog.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -64,8 +63,9 @@ public class AuthController {
     }
 
     @GetMapping("/register/confirm/{token}")
-    public String confirm(@AuthenticationPrincipal User currentUser, @PathVariable("token") String token){
-        return "pass";
+    public String confirm(@PathVariable String token){
+        System.out.println("sono nella get");
+        return authService.confirmToken(token);
     };
 
 }

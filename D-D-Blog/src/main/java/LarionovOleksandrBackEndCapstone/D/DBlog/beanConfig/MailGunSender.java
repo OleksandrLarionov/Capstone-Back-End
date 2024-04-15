@@ -32,7 +32,7 @@ public class MailGunSender {
     }
 
     public void sendMail(String recipient, NewUserDTO payload, String token) {
-        String url = "http://localhost:3000/auth/register/confirm?token=" + token;
+        String url = "http://localhost:3001/auth/register/confirm/" + token;
         // Configura il risolutore del template
         ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
         templateResolver.setPrefix("templates/"); // Imposta la directory dei  template HTML

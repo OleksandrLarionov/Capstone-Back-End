@@ -28,7 +28,7 @@ public class JWTTools {
 
     public String createValidationToken(User user) {
         return Jwts.builder()
-                .subject(String.valueOf(user.getId()))
+                .subject(String.valueOf(user.getEmail()))
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 15))
                 .signWith(Keys.hmacShaKeyFor(secret.getBytes()))
@@ -62,6 +62,6 @@ public class JWTTools {
                 .build()
                 .parseSignedClaims(token)
                 .getPayload()
-                .get("email", String.class);
+                .getSubject();
     }
 }

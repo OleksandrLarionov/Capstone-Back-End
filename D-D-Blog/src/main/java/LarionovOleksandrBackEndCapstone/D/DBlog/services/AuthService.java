@@ -12,6 +12,7 @@ import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.user.UpdateUserDTO;
 import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.user.UserLogInDTO;
 import LarionovOleksandrBackEndCapstone.D.DBlog.repositories.UserRepository;
 import LarionovOleksandrBackEndCapstone.D.DBlog.security.JWTTools;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
 
 @Service
 public class AuthService {
@@ -41,6 +43,15 @@ public class AuthService {
         } else {
             throw new UnauthorizedException("Credenziali non valide!");
         }
+    }
+
+    @Transactional
+    public String confirmToken(String token) {
+        jwtTools.verifyToken(token);
+        String userEmail = jwtTools.extractEmailFromToken(token);
+        User user = userService.findByEmail(userEmail);
+        userService.enableUser(user.getEmail());
+        return "confirmed";
     }
 
 

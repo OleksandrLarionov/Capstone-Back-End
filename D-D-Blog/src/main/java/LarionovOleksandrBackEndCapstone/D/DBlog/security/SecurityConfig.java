@@ -47,7 +47,7 @@ public class SecurityConfig {
                             .requestMatchers("/google/**").permitAll()
                             .requestMatchers("/google/callback").permitAll()
                             .requestMatchers(HttpMethod.POST, "/google/callback/**").permitAll()
-                            .requestMatchers("/auth/**", "/login/**").permitAll();
+                            .requestMatchers("/auth/**", "/login/**", "register/confirm/**").permitAll();
                 })
                 .oauth2Login(withDefaults())
                 .formLogin(withDefaults());
