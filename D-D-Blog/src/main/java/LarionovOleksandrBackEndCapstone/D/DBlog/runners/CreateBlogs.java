@@ -64,7 +64,7 @@ public class CreateBlogs implements CommandLineRunner {
     }
 
     public void Content() {
-        String nomeFile = "src/main/resources/forum_content.json";
+        String nomeFile = "D-D-Blog/src/main/resources/static/forum_content.json";
 
         try (JsonReader reader = new JsonReader(new FileReader(nomeFile))) {
             reader.beginObject(); // Inizio dell'oggetto JSON

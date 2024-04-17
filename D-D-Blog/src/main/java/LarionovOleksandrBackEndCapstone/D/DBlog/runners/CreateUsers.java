@@ -71,6 +71,8 @@ public class CreateUsers implements CommandLineRunner {
         authService.saveNewUser(newUser);
         User user = userService.findByEmail(email);
         user.setRole(ROLE.ADMIN);
+        user.setLocked(false);
+        user.setEnabled(true);
         userRepository.save(user);
     }
     public void users(){
@@ -90,6 +92,8 @@ public class CreateUsers implements CommandLineRunner {
             newUser.setSecretAnswer(secret + secret);
             newUser.setUserBirthday(randomDate());
             authService.saveNewUser(newUser);
+            userService.validation(newUser.getEmail());
+
         }
     }
     public static LocalDate randomDate() {
