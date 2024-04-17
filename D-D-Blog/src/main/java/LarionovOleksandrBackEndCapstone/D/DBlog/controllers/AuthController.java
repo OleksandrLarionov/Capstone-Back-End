@@ -5,10 +5,7 @@ package LarionovOleksandrBackEndCapstone.D.DBlog.controllers;
 
 import LarionovOleksandrBackEndCapstone.D.DBlog.entities.User;
 import LarionovOleksandrBackEndCapstone.D.DBlog.exceptions.BadRequestException;
-import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.user.NewUserDTO;
-import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.user.NewUserResponseDTO;
-import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.user.UserLogInDTO;
-import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.user.UserLogInResponseDTO;
+import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.user.*;
 import LarionovOleksandrBackEndCapstone.D.DBlog.repositories.UserRepository;
 import LarionovOleksandrBackEndCapstone.D.DBlog.security.JWTTools;
 import LarionovOleksandrBackEndCapstone.D.DBlog.services.AuthService;
@@ -20,6 +17,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.security.auth.login.AccountLockedException;
 
 
 @RestController
@@ -38,12 +36,17 @@ public class AuthController {
 
 
     @PostMapping("/login")
-    public UserLogInResponseDTO UserLogInResponseDTO(@RequestBody @Validated UserLogInDTO body, BindingResult validation) {
+    public UserLogInResponseDTO UserLogInResponseDTO(@RequestBody @Validated UserLogInDTO body, BindingResult validation) throws AccountLockedException {
         if (validation.hasErrors()) {
             throw new BadRequestException(validation.getAllErrors());
         } else {
-            String accessToken = authService.authenticateUser(body);
-            return new UserLogInResponseDTO(accessToken);
+            User user = userService.findByEmail(body.email());
+            if (user != null && user.isAccountNonLocked()) {
+                String accessToken = authService.authenticateUser(body);
+                return new UserLogInResponseDTO(accessToken);
+            } else {
+                throw new AccountLockedException("Account locked or not found.");
+            }
         }
     }
 

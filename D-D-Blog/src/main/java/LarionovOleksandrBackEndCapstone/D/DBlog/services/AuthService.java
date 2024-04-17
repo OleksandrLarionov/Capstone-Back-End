@@ -12,6 +12,7 @@ import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.user.UpdateUserDTO;
 import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.user.UserLogInDTO;
 import LarionovOleksandrBackEndCapstone.D.DBlog.repositories.UserRepository;
 import LarionovOleksandrBackEndCapstone.D.DBlog.security.JWTTools;
+import com.github.javafaker.Faker;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -50,12 +51,12 @@ public class AuthService {
         jwtTools.verifyToken(token);
         String userEmail = jwtTools.extractEmailFromToken(token);
         User user = userService.findByEmail(userEmail);
-        userService.enableUser(user.getEmail());
+        userService.validation(user.getEmail());
         return "confirmed";
     }
 
-
     public User saveNewUser(NewUserDTO body) {
+        Faker faker = new Faker();
         userRepository.findByEmail(body.getEmail()).ifPresent(user ->
         {
             throw new BadRequestException("l' email " + user.getEmail() + " è già in uso");
@@ -63,7 +64,7 @@ public class AuthService {
         User newUser = new User();
         Random rndm = new Random();
         int random = rndm.nextInt(1, 1000000);
-        String newUsername = "Thali" + random;
+        String newUsername = faker.witcher().character().split(" ")[0] + random;
         String finalUsername = newUsername;
         int suffix = 1;
         while (userRepository.findByUsername(finalUsername) != null) {
@@ -74,6 +75,7 @@ public class AuthService {
         newUser.setName(body.getName());
         newUser.setSurname(body.getSurname());
         newUser.setEmail(body.getEmail());
+        newUser.setLocked(true);
         List<BlogPost> blogPostList = new ArrayList<>();
         List<Comment> commentsList = new ArrayList<>();
         newUser.setBlogPostList(blogPostList);
@@ -86,14 +88,14 @@ public class AuthService {
             );
         }
         newUser.setRole(ROLE.USER);
-        if(body.getProfileImg() != null){
+        if (body.getProfileImg() != null) {
             newUser.setProfileImage(body.getProfileImg());
         } else {
             newUser.setProfileImage("https://ui-avatars.com/api/?name=" +
                     body.getName().replaceAll(" ", "") + "+" +
                     body.getSurname().replaceAll(" ", ""));
         }
-        newUser.setBlogBackgroundImage("MUST TO BE SETTED");
+        newUser.setBlogBackgroundImage("MUST TO BE SETTED"); //TODO : must to add a possibility to change a background image
         if (body.getSecretAnswer() != null && !body.getSecretAnswer().isEmpty()) {
             newUser.setSecretAnswer(bcrypt.encode(body.getSecretAnswer()));
         }
@@ -101,7 +103,6 @@ public class AuthService {
         mailGunSender.sendMail(body.getEmail(), body, token);
         return userRepository.save(newUser);
     }
-
     public User updateUser(User currentUser, UpdateUserDTO body) {
         User found = userService.findById(currentUser.getId());
         if (body.name() != null) {
@@ -129,9 +130,10 @@ public class AuthService {
                 found.setPassword(bcrypt.encode(body.password()));
             }
             if (body.userBirthday() != null) {
-            found.setUserBirthday(body.userBirthday());
-                }
+                found.setUserBirthday(body.userBirthday());
+            }
         }
         return userRepository.save(found);
     }
+
 }

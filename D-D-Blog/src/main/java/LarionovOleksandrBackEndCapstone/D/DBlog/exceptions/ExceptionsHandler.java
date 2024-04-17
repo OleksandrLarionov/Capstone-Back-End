@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
+import javax.security.auth.login.AccountLockedException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -57,8 +58,15 @@ public class ExceptionsHandler {
     }
 
     @ExceptionHandler(LikeNotFoundException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
     public ResponseEntity<String> handlerLikeNotFoundException(LikeNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(AccountLockedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ResponseEntity<String> handlerAccountLockedEx(AccountLockedException ex){
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
     }
 
     public static String newDateAndHour(){

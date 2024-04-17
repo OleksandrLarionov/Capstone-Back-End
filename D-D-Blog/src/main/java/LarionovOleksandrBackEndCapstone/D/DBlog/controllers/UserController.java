@@ -8,6 +8,7 @@ import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.user.UpdateUserDTO;
 import LarionovOleksandrBackEndCapstone.D.DBlog.payloads.user.UserEmailDTO;
 import LarionovOleksandrBackEndCapstone.D.DBlog.services.AuthService;
 import LarionovOleksandrBackEndCapstone.D.DBlog.services.UserService;
+import jakarta.validation.constraints.Email;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -46,7 +47,8 @@ public class UserController {
 
     @PutMapping("/me/updateProfile")
     @ResponseStatus(HttpStatus.OK)
-    public User updateUser(@AuthenticationPrincipal User currentUser, @RequestBody @Validated UpdateUserDTO body, BindingResult validation) {
+    public User updateUser(@AuthenticationPrincipal User currentUser,
+                           @RequestBody @Validated UpdateUserDTO body, BindingResult validation) {
         if (validation.hasErrors()) {
             throw new BadRequestException(validation.getAllErrors());
         } else {
@@ -55,7 +57,8 @@ public class UserController {
     }
     @PostMapping("/me/check")
     @ResponseStatus(HttpStatus.OK)
-    public CheckResponse responseRole(@AuthenticationPrincipal User currentUser, @RequestBody @Validated UserEmailDTO payload, BindingResult validation) {
+    public CheckResponse responseRole(@AuthenticationPrincipal User currentUser,
+                                      @RequestBody @Validated UserEmailDTO payload, BindingResult validation) {
         if (validation.hasErrors()) {
             throw new BadRequestException(validation.getAllErrors());
         } else {
@@ -88,11 +91,24 @@ public class UserController {
     }
 
     @PostMapping("/me/uploadImage")
-    public String uploadUserProfileImg(@RequestParam("profileImg") MultipartFile file, @AuthenticationPrincipal User currentUser) throws IOException {
+    public String uploadUserProfileImg(@RequestParam("profileImg") MultipartFile file,
+                                       @AuthenticationPrincipal User currentUser) throws IOException {
         return userService.uploadPicture(file,currentUser.getId());
     }
     @PostMapping("/me/uploadImage/commentArea")
-    public String blogBackgroundImage(@RequestParam("commentBackgroundImg") MultipartFile file, @AuthenticationPrincipal User currentUser) throws IOException {
+    public String blogBackgroundImage(@RequestParam("commentBackgroundImg") MultipartFile file,
+                                      @AuthenticationPrincipal User currentUser) throws IOException {
         return userService.blogBackgroundImage(file,currentUser.getId());
+    }
+
+    @GetMapping("/lockUser/{userId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public String lockUser (@AuthenticationPrincipal User currentUser,
+                            @PathVariable UUID userId){
+        User user = userService.findById(userId);
+        userService.validation(user.getEmail());
+        if(!user.getLocked()){
+            return "Account con id: " + user.getId() + " email: " + user.getEmail() + " è stato Bloccato";
+        } else return "Account con id: " + user.getId() + " email: " + user.getEmail() + " è stato Sbloccato";
     }
 }

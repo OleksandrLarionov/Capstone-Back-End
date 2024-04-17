@@ -19,7 +19,12 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     @Transactional
     @Modifying
-    @Query("UPDATE User u " +
-            "SET u.enabled = TRUE WHERE u.email = ?1")
+    @Query("UPDATE User u SET u.enabled = CASE WHEN u.enabled = TRUE THEN FALSE ELSE TRUE END WHERE u.email = ?1")
     int enableUser(String email);
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE User u SET u.locked = CASE WHEN u.locked = TRUE THEN FALSE ELSE TRUE END WHERE u.email = ?1")
+    int lockedUser(String email);
+
 }

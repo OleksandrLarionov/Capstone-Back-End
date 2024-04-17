@@ -1,12 +1,9 @@
 package LarionovOleksandrBackEndCapstone.D.DBlog.services;
-
 import LarionovOleksandrBackEndCapstone.D.DBlog.entities.User;
 import LarionovOleksandrBackEndCapstone.D.DBlog.exceptions.NotFoundException;
 import LarionovOleksandrBackEndCapstone.D.DBlog.repositories.UserRepository;
-
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
-
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,7 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.util.UUID;
 
@@ -75,6 +71,13 @@ public class UserService {
     }
 
     public void enableUser(String email) {
+        userRepository.enableUser(email);
+    }
+
+    public void lockedUser(String email) { userRepository.lockedUser(email);}
+
+    public void validation(String email) {
+        userRepository.lockedUser(email);
         userRepository.enableUser(email);
     }
 }
