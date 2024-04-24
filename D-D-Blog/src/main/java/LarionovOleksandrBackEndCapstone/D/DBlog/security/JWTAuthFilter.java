@@ -37,7 +37,7 @@ public class JWTAuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         if (!request.getMethod().equals("OPTIONS")) {
             String requestPath = request.getServletPath();
-            if (requestPath.startsWith("/google/callback") || requestPath.startsWith("/v3/api-docs") || requestPath.startsWith("/swagger-ui")) {
+            if (requestPath.startsWith("/google/callback") || requestPath.startsWith("/api-docs") || requestPath.startsWith("/swagger-ui")) {
                 filterChain.doFilter(request, response);
                 return;
             }

@@ -59,7 +59,6 @@ public class MailGunSender {
                 .queryString("subject", "Welcome")
                 .queryString("text", "Test sending registration mail")
                 .field("html", htmlContent )
-
                 .asJson();
     }
 }
